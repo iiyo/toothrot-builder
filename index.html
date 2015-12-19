@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Toothrot Engine</title>
+        <link rel="stylesheet" type="text/css" href="style/default.css" />
+    </head>
+    <body>
+        <div id="main">
+            <div id="header">
+                <div class="Menu">
+                    <a class="Button" data-type="button" data-action="selectFolder">Add Project Folder...</a>
+                </div>
+                <h1 class="Title">Toothrot Engine</h1>
+            </div>
+            <div id="content">
+                
+            </div>
+        </div>
+        <script type="trb-template" data-template-name="project">
+            <div class="Project" data-type="project">
+                <div class="Info">
+                    <div class="Name">{name}</div>
+                    <div class="Path">{path}</div>
+                </div>
+                <div class="ButtonBar">
+                    <a
+                        class="Button"
+                        data-type="button"
+                        data-action="buildDesktop"
+                        data-project="{path}">Build Desktop</a>
+                    <a
+                        class="Button"
+                        data-type="button"
+                        data-action="build"
+                        data-project="{path}">Build</a>
+                    <a
+                        class="Button"
+                        data-type="button"
+                        data-action="run"
+                        data-project="{path}">Run</a>
+                </div>
+            </div>
+        </script>
+        <script>
+            global.document = document;
+            global.window = window;
+        </script>
+        <script src="src/index.js"></script>
+    </body>
+</html>

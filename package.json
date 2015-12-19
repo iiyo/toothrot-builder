@@ -9,16 +9,16 @@
   "author": "J. Steinbeck <mail@steinbeck.it>",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "toothrot": "file:../toothrot",
+    "toothrot": "^1.2.0-alpha.1512192304",
     "transform-js": "^1.1.0-final.1512141547",
     "vrep": "^1.0.1-final.1512181002"
   },
-    "window": {
-        "title": "Toothrot Engine",
-        "toolbar": false,
-        "frame": true,
-        "width": 580,
-        "height": 800,
-        "position": "mouse"
-    }
+  "window": {
+    "title": "Toothrot Engine",
+    "toolbar": false,
+    "frame": true,
+    "width": 580,
+    "height": 800,
+    "position": "mouse"
+  }
 }

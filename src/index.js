@@ -44,6 +44,9 @@
         else if (action === "build") {
             buildProject(path);
         }
+        else if (action === "buildDesktop") {
+            buildDesktopProject(path);
+        }
         else if (action === "run") {
             runBrowser(path);
         }
@@ -147,6 +150,26 @@
                 info.name + " built successfully!",
                 "The Toothrot Engine project '" + info.name +"' has been built " +
                 "in " + path
+            );
+            
+            then();
+        });
+    }
+    
+    function buildDesktopProject (path, then) {
+        
+        then = then || function () {};
+        
+        toothrot.build(path, null, true, function () {
+            
+            var info = updateProjectInfo(path);
+            
+            updateProjectList();
+            
+            notify(
+                info.name + " built successfully!",
+                "The Toothrot Engine project built " +
+                "in:\n" + path
             );
             
             then();

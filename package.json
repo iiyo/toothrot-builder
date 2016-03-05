@@ -1,6 +1,6 @@
 {
   "name": "toothrot-builder",
-  "version": "1.0.0-alpha.1512181046",
+  "version": "1.0.0-alpha.1603051759",
   "description": "A desktop build tool for creating and deploying Toothrot projects.",
   "main": "index.html",
   "scripts": {
@@ -9,13 +9,13 @@
   "author": "J. Steinbeck <mail@steinbeck.it>",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "toothrot": "^1.4.0-beta.1512211114",
+    "toothrot": "^1.4.1-beta.1603051543",
     "transform-js": "^1.1.0-final.1512141547",
     "vrep": "^1.0.1-final.1512181002"
   },
   "window": {
     "title": "Toothrot Engine",
-    "toolbar": true,
+    "toolbar": false,
     "frame": true,
     "width": 580,
     "height": 800,

@@ -53,13 +53,13 @@
     function show (element, then) {
         transform(0, 1, function (v) { element.style.opacity = v; }, {
             duration: SHOW_DURATION
-        }, then)
+        }, then);
     }
     
     function hide (element, then) {
         transform(1, 0, function (v) { element.style.opacity = v; }, {
             duration: HIDE_DURATION
-        }, then)
+        }, then);
     }
     
     module.exports = confirm;

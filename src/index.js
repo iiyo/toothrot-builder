@@ -24,7 +24,6 @@
                 var projectFile = readProjectFile(path);
                 
                 if (!projectFile) {
-                    console.log("No project file found in directory.");
                     confirm(
                         "Create new project?",
                         "No project found in folder. Create new project here?",
@@ -36,7 +35,6 @@
                     );
                 }
                 else {
-                    console.log("Project file found in directory.");
                     importProject(path, projectFile);
                 }
             });
@@ -54,17 +52,16 @@
     
     function selectDir (then) {
         
-        var chooser = document.createElement("input");
+        var dialog = require("electron").remote.dialog;
         
-        chooser.setAttribute("type", "file");
-        chooser.setAttribute("nwdirectory", "nwdirectory");
+        dialog.showOpenDialog({
+            properties: ["openDirectory"]
+        }, processPaths);
         
-        chooser.addEventListener("change", function(evt) {
-            console.log(chooser.value);
-            then(chooser.value);
-        });
-        
-        chooser.click();  
+        function processPaths (paths) {
+            console.log("chosen path:", paths[0]);
+            then(paths[0]);
+        } 
     }
     
     function readProjectFile (path) {
@@ -82,8 +79,6 @@
     
     function createProject (path) {
         
-        console.log("Creating new project in " + path);
-        
         toothrot.init(path, function () {
             
             var info = JSON.parse("" + fs.readFileSync(normalize(path + "/project.json")));
@@ -93,7 +88,6 @@
     }
     
     function importProject (path, info) {
-        console.log("Importing project from " + path);
         addProject(path, info);
     }
     
@@ -130,7 +124,7 @@
             text += format(projectTemplate, {
                 path: key,
                 name: data[key].name
-            })
+            });
         }
         
         content.innerHTML = text;
@@ -160,17 +154,25 @@
         
         then = then || function () {};
         
-        toothrot.build(path, null, true, function () {
+        toothrot.build(path, null, true, function (error) {
             
             var info = updateProjectInfo(path);
             
             updateProjectList();
             
-            notify(
-                info.name + " built successfully!",
-                "The Toothrot Engine project built " +
-                "in:\n" + path
-            );
+            if (error) {
+                notify(
+                    info.name + " cannot be built!",
+                    error
+                );
+            }
+            else {
+                notify(
+                    info.name + " built successfully!",
+                    "The Toothrot Engine project built " +
+                    "in:\n" + path
+                );
+            }
             
             then();
         });
@@ -207,7 +209,7 @@
             
             var win = window.open(normalize("file://" + path + "/build/browser/index.html"));
             
-            win.resizeTo(800, 600);
+            win.setSize(800, 600);
         });
     }
     

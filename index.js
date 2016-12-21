@@ -6,8 +6,12 @@ var electron = require("electron");
 var path = require("path");
 var url = require("url");
 
+var toothrot = require("toothrot");
+
 var app = electron.app;
 var BrowserWindow = electron.BrowserWindow;
+
+global.toothrot = toothrot;
 
 function start () {
     
@@ -19,7 +23,7 @@ function start () {
         slashes: true
     }));
     
-    /* win.webContents.openDevTools(); */
+    win.webContents.openDevTools();
     
     win.on("closed", function () {
         win = null;

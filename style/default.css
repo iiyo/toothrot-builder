@@ -1,3 +1,298 @@
+/*
+YUI 3.18.1 (build f7e7bcb)
+Copyright 2014 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
+*/
+
+html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal}ol,ul{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:text-top}sub{vertical-align:text-bottom}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit;*font-size:100%}legend{color:#000}#yui3-css-stamp.cssreset{display:none}
+
+.hidden {
+    display: none;
+}
+
+.abs {
+    position: absolute;
+}
+
+.fix {
+    position: fixed;
+}
+
+.l0 {
+    left: 0;
+}
+
+.t0 {
+    top: 0;
+}
+
+.r0 {
+    right: 0;
+}
+
+.b0 {
+    bottom: 0;
+}
+
+.di {
+    display: inline;
+}
+
+.db {
+    display: block;
+}
+
+.dib {
+    display: inline-block;
+}
+
+.p0 {
+    padding: 0;
+}
+
+.p-s {
+    padding: 4px;
+}
+
+.p-m {
+    padding: 8px;
+}
+
+.p-l {
+    padding: 16px;
+}
+
+.p-xl {
+    padding: 20px;
+}
+
+.pv-s {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.m0 {
+    margin: 0;
+}
+
+.m-xs {
+    margin: 2px;
+}
+
+.m-s {
+    margin: 4px;
+}
+
+.m-m {
+    margin: 8px;
+}
+
+.m-l {
+    margin: 16px;
+}
+
+.m-xl {
+    margin: 20px;
+}
+
+.mt-xs {
+    margin-top: 2px;
+}
+
+.mt-s {
+    margin-top: 4px;
+}
+
+.mt-m {
+    margin-top: 8px;
+}
+
+.mt-l {
+    margin-top: 16px;
+}
+
+.mt-xl {
+    margin-top: 20px;
+}
+
+.mb-xs {
+    margin-bottom: 2px;
+}
+
+.mb-s {
+    margin-bottom: 4px;
+}
+
+.mb-m {
+    margin-bottom: 8px;
+}
+
+.mb-l {
+    margin-bottom: 16px;
+}
+
+.mb-xl {
+    margin-bottom: 20px;
+}
+
+.ml-xs {
+    margin-left: 2px;
+}
+
+.ml-s {
+    margin-left: 4px;
+}
+
+.ml-m {
+    margin-left: 8px;
+}
+
+.ml-l {
+    margin-left: 16px;
+}
+
+.ml-xl {
+    margin-left: 20px;
+}
+
+.mv-xl {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.mh-m {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.w100 {
+    width: 100%;
+}
+
+.hm-50p {
+    min-height: 50px;
+}
+
+.ofh {
+    overflow: hidden;
+}
+
+.ofa {
+    overflow: auto;
+}
+
+.ofs {
+    overflow: scroll;
+}
+
+.lh0 {
+    line-height: 0;
+}
+
+.fs-xxs {
+    font-size: 10px;
+}
+
+.fs-xs {
+    font-size: 12px;
+}
+
+.fs-s {
+    font-size: 14px;
+}
+
+.fs-m {
+    font-size: 16px;
+}
+
+.fs-l {
+    font-size: 20px;
+}
+
+.fs-xl {
+    font-size: 24px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.tal {
+    text-align: left;
+}
+
+.taj {
+    text-align: justify;
+}
+
+.tac {
+    text-align: center;
+}
+
+.tar {
+    text-align: right;
+}
+
+.green {
+    color: rgb(100, 250, 100);
+}
+
+.red {
+    color: rgb(250, 100, 100);
+}
+
+.grey {
+    color: rgb(200, 200, 200);
+}
+
+.bg-light {
+    background: rgb(50, 50, 50);
+}
+
+.bg-dark {
+    background: rgb(10, 10, 10);
+}
+
+.bgg-dark {
+    background: #424242;
+    background-image: -webkit-linear-gradient(top, #424242, #1f1f1f);
+    background-image: -moz-linear-gradient(top, #424242, #1f1f1f);
+    background-image: -ms-linear-gradient(top, #424242, #1f1f1f);
+    background-image: -o-linear-gradient(top, #424242, #1f1f1f);
+    background-image: linear-gradient(to bottom, #424242, #1f1f1f);
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.oval-s {
+    border-radius: 5px;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.oval {
+    border-radius: 10px;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* border style for interactive elements like buttons: */
+.iact {
+    border: 1px solid #757575;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+.html5tooltip-box, .html5tooltip-box::before {
+    box-shadow: none;
+}
+
+* {
+    box-sizing: border-box;
+}
 
 html, body {
     margin: 0;
@@ -7,11 +302,39 @@ html, body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+body {
+    overflow: hidden;
+}
+
+input {
+    background: rgb(20, 20, 20);
+    color: white;
+    border-radius: 5px;
+}
+
+input[type=text], input[type=password] {
+    border: 2px solid rgb(0, 0, 0);
+    border-bottom: 1px solid rgb(80, 80, 80);
+    border-right: 1px solid rgb(80, 80, 80);
+}
+
+.overlay {
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.dialog {
+    background: rgb(50, 50, 50);
+    margin: auto;
+    margin-top: 50px;
+    max-width: 600px;
+    border: 1px solid black;
+    border-top: 1px solid rgb(80, 80, 80);
+    border-left: 1px solid rgb(80, 80, 80);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
 #header {
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
     padding: 10px;
     background: rgb(20, 20, 20);
     color: white;
@@ -23,70 +346,75 @@ html, body {
     float: right;
 }
 
-#header h1 {
-    font-size: 1.4em;
-    margin: 0;
-    margin-top: 10px;
-    margin-left: 10px;
+.contentArea {
+    top: 66px;
+    padding: 20px;
+    overflow: auto;
 }
 
 #content {
-    padding: 20px;
-    padding-top: 85px;
+    max-width: 870px;
+    margin: auto;
 }
 
-.Button {
-    display: inline-block;
-    padding: 10px;
-    margin-left: 10px;
-    background: rgb(50, 50, 50);
-    border: 1px solid rgb(100, 100, 100);
-    border-radius: 3px;
+#content h1 {
+    background: rgb(25, 25, 25);
+    border-radius: 10px;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0;
+    font-size: 20px;
+    color: rgb(220, 220, 220);
+}
+
+.button {
+    background: #424242;
+    background-image: -webkit-linear-gradient(top, #424242, #1f1f1f);
+    background-image: -moz-linear-gradient(top, #424242, #1f1f1f);
+    background-image: -ms-linear-gradient(top, #424242, #1f1f1f);
+    background-image: -o-linear-gradient(top, #424242, #1f1f1f);
+    background-image: linear-gradient(to bottom, #424242, #1f1f1f);
+    box-shadow: 1px 1px 2px #030303;
+    font-family: Arial;
+    text-decoration: none;
     cursor: pointer;
-    font-weight: bold;
 }
 
-.DialogContainer {
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
+.button:hover {
+    background: #757575;
+    background-image: -webkit-linear-gradient(top, #757575, #3d3d3d);
+    background-image: -moz-linear-gradient(top, #757575, #3d3d3d);
+    background-image: -ms-linear-gradient(top, #757575, #3d3d3d);
+    background-image: -o-linear-gradient(top, #757575, #3d3d3d);
+    background-image: linear-gradient(to bottom, #757575, #3d3d3d);
+    text-decoration: none;
 }
-
-.Dialog {
-    background: rgb(20, 20, 20);
-    border: 1px solid rgb(100, 100, 100);
-    border-radius: 5px;
-    margin: 20px;
-    max-width: 500px;
-    padding: 20px;
-}
-
-.Dialog .Title {
-    margin-top: 0;
-}
-
-.Dialog .ButtonBar {
-    text-align: right;
-}
-
 
 .Project {
-    padding: 10px;
+    padding: 0;
     background: rgb(20, 20, 20);
-    border: 1px solid rgb(100, 100, 100);
-    border-radius: 5px;
     max-width: 500px;
-    margin: auto;
-    margin-bottom: 20px;
+    float: left;
+    width: 200px;
+    overflow: hidden;
+    text-align: center;
+}
+
+.Project:hover {
+    background: rgb(30, 30, 30);
+    border: 1px solid rgb(250, 50, 50);
 }
 
 .Project .Name {
-    font-size: 1.3em;
+    font-size: 0.8em;
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 20px;
+    background: rgb(10, 10, 10);
+    padding: 5px;
+    text-align: center;
+}
+
+.Project:hover .Name {
+    background: rgb(20, 20, 20);
 }
 
 .Project .Info {
@@ -94,14 +422,12 @@ html, body {
 }
 
 .Project .ButtonBar {
-    text-align: right;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
-.Project .Button {
-    font-size: 0.9em;
-    padding: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-left: 5px;
+.realmName {
+    text-transform: uppercase;
 }
 

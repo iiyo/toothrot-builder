@@ -2,16 +2,18 @@
 
 (function () {
     
+    var Box = require("t3js");
+    
     var fs = require("fs");
     var toothrot = require("toothrot");
     var normalize = require("path").normalize;
     var format = require("vrep").format;
-    var confirm = require("./src/confirm.js");
     
-    var projectTemplate = document.querySelector("*[data-template-name=project]").innerHTML;
-    var main = document.getElementById("main");
+    var config = require("./src/config");
+    
     var content = document.getElementById("content");
     
+    /*
     main.addEventListener("click", function (event) {
         
         var target = event.target;
@@ -49,6 +51,7 @@
             runBrowser(path);
         }
     });
+    */
     
     function selectDir (then) {
         
@@ -192,27 +195,32 @@
         return info;
     }
     
-    function notify (title, message, timeout) {
-        
-        var notification = new Notification(title, {
-            icon: "style/spanner-hammer.png",
-            body: message
-        });
-        
-        setTimeout(function () {
-            notification.close();
-        }, timeout || 4000);
+    function ensureAppFolderExists () {
+        if (!fs.existsSync(config.paths.app)) {
+            fs.mkdirSync(config.paths.app);
+        }
     }
     
-    function runBrowser (path) {
-        buildProject(path, function () {
-            
-            var win = window.open(normalize("file://" + path + "/build/browser/index.html"));
-            
-            win.setSize(800, 600);
-        });
+    function ensureProjectsFolderExists () {
+        if (!fs.existsSync(config.paths.projects)) {
+            fs.mkdirSync(config.paths.projects);
+        }
     }
     
-    updateProjectList();
+    ensureAppFolderExists();
+    ensureProjectsFolderExists();
+    
+    Box.Application.on("error", function (data) {
+        console.error(data.data.exception);
+    });
+    
+    Box.Application.addService("notification", require("./src/services/notification"));
+    Box.Application.addService("dialog", require("./src/services/dialog"));
+    Box.Application.addService("project", require("./src/services/project"));
+    
+    Box.Application.addModule("header", require("./src/modules/header"));
+    Box.Application.addModule("projectList", require("./src/modules/projectList"));
+    
+    Box.Application.init(config);
     
 }());

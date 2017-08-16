@@ -1,4 +1,7 @@
 
+var ENTER_KEY = 13;
+var ESC_KEY = 27;
+
 var fs = require("fs");
 var format = require("vrep").format;
 var dialog = require("./dialog");
@@ -19,12 +22,38 @@ function prompt (options) {
     
     dialog(format(template, values), {
         onAccept: onAccept,
-        onClose: config.onClose
+        onClose: config.onClose,
+        onOpen: onOpen
     });
     
     function onAccept (values) {
         if (config.onAccept) {
             config.onAccept(values ? values.value : null);
+        }
+    }
+    
+    function onOpen (element) {
+        
+        var okButton = element.querySelector("[data-type='okButton']");
+        var cancelButton = element.querySelector("[data-type='cancelButton']");
+        
+        element.querySelector("input[type='text']").focus();
+        
+        element.addEventListener("keyup", function (event) {
+            if (event.keyCode === ENTER_KEY) {
+                okButton.click();
+                destroy();
+            }
+            else if (event.keyCode === ESC_KEY) {
+                cancelButton.click();
+                destroy();
+            }
+        });
+        
+        function destroy () {
+            okButton = null;
+            cancelButton = null;
+            element = null;
         }
     }
 }

@@ -217,9 +217,13 @@
     Box.Application.addService("notification", require("./src/services/notification"));
     Box.Application.addService("dialog", require("./src/services/dialog"));
     Box.Application.addService("project", require("./src/services/project"));
+    Box.Application.addService("story", require("./src/services/story"));
+    
+    Box.Application.addBehavior("projectControl", require("./src/behaviors/projectControl"));
     
     Box.Application.addModule("header", require("./src/modules/header"));
     Box.Application.addModule("projectList", require("./src/modules/projectList"));
+    Box.Application.addModule("editor", require("./src/modules/editor"));
     
     Box.Application.init(config);
     

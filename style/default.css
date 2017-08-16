@@ -67,6 +67,46 @@ html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre
     padding: 20px;
 }
 
+.pl-xs {
+    padding-left: 2px;
+}
+
+.pl-s {
+    padding-left: 4px;
+}
+
+.pl-m {
+    padding-left: 8px;
+}
+
+.pl-l {
+    padding-left: 16px;
+}
+
+.pl-xl {
+    padding-left: 20px;
+}
+
+.pt-xs {
+    padding-top: 2px;
+}
+
+.pt-s {
+    padding-top: 4px;
+}
+
+.pt-m {
+    padding-top: 8px;
+}
+
+.pt-l {
+    padding-top: 16px;
+}
+
+.pt-xl {
+    padding-top: 20px;
+}
+
 .pv-s {
     padding-top: 4px;
     padding-bottom: 4px;
@@ -156,6 +196,26 @@ html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre
     margin-left: 20px;
 }
 
+.mr-xs {
+    margin-right: 2px;
+}
+
+.mr-s {
+    margin-right: 4px;
+}
+
+.mr-m {
+    margin-right: 8px;
+}
+
+.mr-l {
+    margin-right: 16px;
+}
+
+.mr-xl {
+    margin-right: 20px;
+}
+
 .mv-xl {
     margin-top: 20px;
     margin-bottom: 20px;
@@ -164,6 +224,50 @@ html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre
 .mh-m {
     margin-left: 8px;
     margin-right: 8px;
+}
+
+.ml20 {
+    margin-left: 20%;
+}
+
+.ml30 {
+    margin-left: 30%;
+}
+
+.w10 {
+    width: 10%;
+}
+
+.w20 {
+    width: 20%;
+}
+
+.w30 {
+    width: 30%;
+}
+
+.w40 {
+    width: 40%;
+}
+
+.w50 {
+    width: 50%;
+}
+
+.w60 {
+    width: 60%;
+}
+
+.w70 {
+    width: 70%;
+}
+
+.w80 {
+    width: 80%;
+}
+
+.w90 {
+    width: 90%;
 }
 
 .w100 {
@@ -186,8 +290,16 @@ html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre
     overflow: scroll;
 }
 
+.ff-mono {
+    font-family: monospace;
+}
+
 .lh0 {
     line-height: 0;
+}
+
+.lh-l {
+    line-height: 20px;
 }
 
 .fs-xxs {
@@ -254,6 +366,10 @@ html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre
     background: rgb(10, 10, 10);
 }
 
+.bg-flat {
+    background: rgb(25, 25, 25);
+}
+
 .bgg-dark {
     background: #424242;
     background-image: -webkit-linear-gradient(top, #424242, #1f1f1f);
@@ -286,6 +402,26 @@ html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre
     border-bottom: 1px solid black;
 }
 
+.fl {
+    float: left;
+}
+
+.fr {
+    float: right;
+}
+
+.link {
+    color: rgb(100, 100, 200);
+}
+
+[data-exists=false] .link {
+    color: rgb(200, 100, 100);
+}
+
+[data-hidden=true] {
+    display: none;
+}
+
 .html5tooltip-box, .html5tooltip-box::before {
     box-shadow: none;
 }
@@ -306,16 +442,20 @@ body {
     overflow: hidden;
 }
 
-input {
+input, textarea {
     background: rgb(20, 20, 20);
     color: white;
     border-radius: 5px;
 }
 
-input[type=text], input[type=password] {
+input[type=text], input[type=password], .sunken {
     border: 2px solid rgb(0, 0, 0);
     border-bottom: 1px solid rgb(80, 80, 80);
     border-right: 1px solid rgb(80, 80, 80);
+}
+
+.sectionList {
+    min-width: 200px;
 }
 
 .overlay {
@@ -364,6 +504,11 @@ input[type=text], input[type=password] {
     border-bottom-left-radius: 0;
     font-size: 20px;
     color: rgb(220, 220, 220);
+}
+
+.error {
+    background: rgb(180, 50, 50);
+    color: white;
 }
 
 .button {
@@ -431,3 +576,6 @@ input[type=text], input[type=password] {
     text-transform: uppercase;
 }
 
+.nodeText {
+    min-height: 300px;
+}

@@ -10,6 +10,7 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "domfx": "^0.2.0",
+    "domglue": "file:///home/j/Projekte/iiyo/domglue",
     "electron-patch-fs": "^1.0.3",
     "homedir": "^0.6.0",
     "html5tooltipsjs": "^1.7.0",

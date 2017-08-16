@@ -1,10 +1,16 @@
 
+var ATTRIBUTE_PROJECT = "data-project";
+
+var fs = require("fs");
+var fade = require("domfx/fade");
+var each = require("enjoy-core/each");
+var format = require("vrep").format;
+
+var itemTemplate = "" + fs.readFileSync("src/templates/projectListItem.html");
+
 function create (context) {
     
     var element, content, projects, dialogs;
-    var each = require("enjoy-core/each");
-    var format = require("vrep").format;
-    var itemTemplate = "" + require("fs").readFileSync("src/templates/projectListItem.html");
     
     function init () {
         
@@ -16,6 +22,10 @@ function create (context) {
         updateProjectList();
         
         console.log("Module 'projectList' initialized.");
+        
+        setTimeout(function () {
+            context.broadcast("goToRealm", "projects");
+        }, 10);
     }
     
     function updateProjectList () {
@@ -49,26 +59,29 @@ function create (context) {
     }
     
     function handleClick (event, element, elementType) {
-        if (elementType === "runButton") {
-            projects.runProject(element.getAttribute("data-project"));
+        if (elementType === "project") {
+            context.broadcast("changeToProject", element.getAttribute(ATTRIBUTE_PROJECT));
+            context.broadcast("goToRealm", "editor");
         }
-        else if (elementType === "buildButton") {
-            projects.buildProject(element.getAttribute("data-project"));
+    }
+    
+    function handleRealmChange (realm) {
+        if (realm === "projects") {
+            fade.in(element, 0);
         }
-        else if (elementType === "buildDesktopButton") {
-            projects.buildProjectForDesktop(element.getAttribute("data-project"));
-        }
-        else if (elementType === "deleteButton") {
-            deleteProject(element.getAttribute("data-project"));
+        else {
+            fade.out(element, 0);
         }
     }
     
     return {
+        behaviors: ["projectControl"],
         init: init,
         destroy: destroy,
         onmessage: {
             "projectCreated": updateProjectList,
-            "projectDeleted": updateProjectList
+            "projectDeleted": updateProjectList,
+            "goToRealm": handleRealmChange
         },
         onclick: handleClick
     };

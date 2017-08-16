@@ -54,6 +54,10 @@ function create (app) {
         return normalize(getProjectFolder(name) + "/resources/story.md");
     }
     
+    function getAstFilePath (name) {
+        return normalize(getProjectFolder(name) + "/resources/ast.json");
+    }
+    
     function getProjectInfo (name) {
         return JSON.parse("" + fs.readFileSync(getProjectInfoFilePath(name)));
     }
@@ -154,6 +158,24 @@ function create (app) {
         return "" + fs.readFileSync(getStoryFilePath(name));
     }
     
+    function getAstFile (name, then) {
+        
+        var ast;
+        var path = getAstFilePath(name);
+        
+        if (!fs.existsSync(path)) {
+            return parseStoryFile(name, then);
+        }
+        
+        ast = JSON.parse("" + fs.readFileSync(path));
+        
+        if (typeof then === "function") {
+            return then(null, ast);
+        }
+        
+        return ast;
+    }
+    
     return {
         createProject: createProject,
         getProjectInfo: getProjectInfo,
@@ -165,7 +187,9 @@ function create (app) {
         runProject: runProject,
         deleteProject: deleteProject,
         parseStoryFile: parseStoryFile,
-        getStoryFile: getStoryFile
+        getStoryFile: getStoryFile,
+        getAstFilePath: getAstFilePath,
+        getAstFile: getAstFile
     };
 }
 

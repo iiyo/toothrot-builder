@@ -30,8 +30,9 @@ function dialog (content, options) {
     document.body.appendChild(container);
     
     function open () {
-        onOpen();
-        fade.in(container, FADE_DURATION);
+        fade.in(container, FADE_DURATION, function () {
+            onOpen(container);
+        });
     }
     
     function accept () {

@@ -1,4 +1,6 @@
 
+var shell = require("electron").shell;
+
 var ATTRIBUTE_PROJECT = "data-project";
 
 function create (context) {
@@ -24,20 +26,32 @@ function create (context) {
     }
     
     function handleClick (event, element, elementType) {
+        
+        var projectName;
+        
+        if (!element || !element.getAttribute) {
+            return;
+        }
+        
+        projectName = element.getAttribute(ATTRIBUTE_PROJECT);
+        
         if (elementType === "runButton") {
-            projects.runProject(element.getAttribute(ATTRIBUTE_PROJECT));
+            projects.runProject(projectName);
+        }
+        else if (elementType === "openFolderButton") {
+            shell.openItem(projects.getProjectFolder(projectName));
         }
         else if (elementType === "buildButton") {
-            projects.buildProject(element.getAttribute(ATTRIBUTE_PROJECT));
+            projects.buildProject(projectName);
         }
         else if (elementType === "buildDesktopButton") {
-            projects.buildProjectForDesktop(element.getAttribute(ATTRIBUTE_PROJECT));
+            projects.buildProjectForDesktop(projectName);
         }
         else if (elementType === "deleteButton") {
-            deleteProject(element.getAttribute(ATTRIBUTE_PROJECT));
+            deleteProject(projectName);
         }
         else if (elementType === "project") {
-            context.broadcast("changeToProject", element.getAttribute(ATTRIBUTE_PROJECT));
+            context.broadcast("changeToProject", projectName);
             context.broadcast("goToRealm", "editor");
         }
     }

@@ -50,14 +50,6 @@ function create (context) {
         dialogs = null;
     }
     
-    function deleteProject (name) {
-        dialogs.confirmDeleteProject(name, function (accepted) {
-            if (accepted) {
-                projects.deleteProject(name);
-            }
-        });
-    }
-    
     function handleClick (event, element, elementType) {
         if (elementType === "project") {
             context.broadcast("changeToProject", element.getAttribute(ATTRIBUTE_PROJECT));

@@ -10,13 +10,14 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "domfx": "^0.2.0",
-    "domglue": "file:///home/j/Projekte/iiyo/domglue",
+    "domglue": "1.0.x",
     "electron-patch-fs": "^1.0.3",
     "homedir": "^0.6.0",
-    "html5tooltipsjs": "^1.7.0",
+    "monaco-editor": "^0.10.1",
+    "monaco-loader": "^0.8.2",
     "rimraf": "^2.5.4",
     "t3js": "^2.7.0",
-    "toothrot": "^1.6.0",
+    "toothrot": "2.0.x",
     "transform-js": "^1.1.0-final.1512141547",
     "vrep": "^1.0.1-final.1512181002"
   },

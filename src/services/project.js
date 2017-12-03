@@ -28,9 +28,15 @@ function create (app) {
     function initProjectName (name) {
         
         var info = getProjectInfo(name);
+        var storyPath = getStoryFilePath(name);
+        var storyLines = getStoryFile(name).split("\n");
         
         info.name = name;
         
+        storyLines.shift();
+        storyLines.unshift("# " + name);
+        
+        fs.writeFileSync(storyPath, storyLines.join("\n"));
         saveProjectInfo(name, info);
     }
     
@@ -51,7 +57,7 @@ function create (app) {
     }
     
     function getStoryFilePath (name) {
-        return normalize(getProjectFolder(name) + "/resources/story.md");
+        return normalize(getProjectFolder(name) + "/resources/story.trot.md");
     }
     
     function getAstFilePath (name) {
@@ -179,6 +185,7 @@ function create (app) {
     return {
         createProject: createProject,
         getProjectInfo: getProjectInfo,
+        getProjectInfoFilePath: getProjectInfoFilePath,
         getProjectInfos: getProjectInfos,
         getProjectNames: getProjectNames,
         getProjectFolder: getProjectFolder,

@@ -274,6 +274,10 @@ html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre
     width: 100%;
 }
 
+.h100 {
+    height: 100%;
+}
+
 .hm-50p {
     min-height: 50px;
 }
@@ -397,9 +401,9 @@ html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre
 
 /* border style for interactive elements like buttons: */
 .iact {
-    border: 1px solid #757575;
-    border-right: 1px solid black;
-    border-bottom: 1px solid black;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 3px;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .fl {
@@ -433,7 +437,7 @@ html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre
 html, body {
     margin: 0;
     padding: 0;
-    background: rgb(30, 30, 30);
+    background: rgb(50, 50, 50);
     color: white;
     font-family: Arial, Helvetica, sans-serif;
 }
@@ -468,6 +472,7 @@ input[type=text], input[type=password], .sunken {
     margin: auto;
     margin-top: 50px;
     max-width: 600px;
+    border-radius: 3px;
     border: 1px solid black;
     border-top: 1px solid rgb(80, 80, 80);
     border-left: 1px solid rgb(80, 80, 80);
@@ -475,35 +480,38 @@ input[type=text], input[type=password], .sunken {
 }
 
 #header {
-    padding: 10px;
-    background: rgb(20, 20, 20);
+    padding: 3px;
+    background: rgb(0, 0, 0);
     color: white;
-    box-shadow: 2px 2px 3px rgb(20, 20, 20);
-    border-bottom: 1px solid rgb(50, 50, 50);
 }
 
 #header .Menu {
     float: right;
+    padding-right: 3px;
 }
 
-.contentArea {
-    top: 66px;
-    padding: 20px;
+.content-area {
+    top: 54px;
+    padding: 10px;
     overflow: auto;
 }
 
 #content {
-    max-width: 870px;
+    max-width: 960px;
     margin: auto;
 }
 
 #content h1 {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
     background: rgb(25, 25, 25);
-    border-radius: 10px;
-    border-top-right-radius: 0;
-    border-bottom-left-radius: 0;
-    font-size: 20px;
+    font-size: 12px;
+    text-transform: uppercase;
     color: rgb(220, 220, 220);
+    padding: 5px;
+    padding-left: 8px;
 }
 
 .error {
@@ -512,64 +520,55 @@ input[type=text], input[type=password], .sunken {
 }
 
 .button {
-    background: #424242;
-    background-image: -webkit-linear-gradient(top, #424242, #1f1f1f);
-    background-image: -moz-linear-gradient(top, #424242, #1f1f1f);
-    background-image: -ms-linear-gradient(top, #424242, #1f1f1f);
-    background-image: -o-linear-gradient(top, #424242, #1f1f1f);
-    background-image: linear-gradient(to bottom, #424242, #1f1f1f);
-    box-shadow: 1px 1px 2px #030303;
-    font-family: Arial;
-    text-decoration: none;
+    color: rgb(220, 220, 220);
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    font-size: 1.2em;
     cursor: pointer;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    transition-duration: 0.5s;
 }
 
 .button:hover {
-    background: #757575;
-    background-image: -webkit-linear-gradient(top, #757575, #3d3d3d);
-    background-image: -moz-linear-gradient(top, #757575, #3d3d3d);
-    background-image: -ms-linear-gradient(top, #757575, #3d3d3d);
-    background-image: -o-linear-gradient(top, #757575, #3d3d3d);
-    background-image: linear-gradient(to bottom, #757575, #3d3d3d);
+    background: rgba(50, 50, 50, 0.5);
     text-decoration: none;
 }
 
-.Project {
+.project {
+    max-width: 700px;
     padding: 0;
-    background: rgb(20, 20, 20);
-    max-width: 500px;
-    float: left;
-    width: 200px;
+    margin: auto;
+    margin-top: 10px;
+    background: rgb(30, 30, 30);
     overflow: hidden;
     text-align: center;
+    border-radius: 3px;
+    transition-duration: 0.5s;
 }
 
-.Project:hover {
-    background: rgb(30, 30, 30);
-    border: 1px solid rgb(250, 50, 50);
+.project:first-child {
+    margin-top: 30px;
 }
 
-.Project .Name {
-    font-size: 0.8em;
-    font-weight: bold;
-    margin-bottom: 20px;
-    background: rgb(10, 10, 10);
+.project:hover {
+    background: rgb(15, 15, 15);
+}
+
+.project .info {
+    float: left;
+}
+
+.project .button-bar {
+    float: right;
     padding: 5px;
+}
+
+.project .name {
+    padding: 10px;
     text-align: center;
-}
-
-.Project:hover .Name {
-    background: rgb(20, 20, 20);
-}
-
-.Project .Info {
-    margin-bottom: 15px;
-}
-
-.Project .ButtonBar {
-    text-align: center;
-    margin-bottom: 20px;
-    margin-top: 20px;
+    line-height: 30px;
 }
 
 .realmName {
@@ -578,4 +577,35 @@ input[type=text], input[type=password], .sunken {
 
 .nodeText {
     min-height: 300px;
+}
+
+.editor-frame {
+    top: 130px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+}
+
+.editor-content {
+    width: 100%;
+    height: 100%;
+    max-width: 960px;
+    margin: auto;
+}
+
+.lines-content {
+    padding-left: 5px;
+}
+
+.margin-view-overlays {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.file-controls {
+    margin-top: 25px;
+}
+
+.file-controls select {
+    height: 30px;
+    min-width: 300px;
 }

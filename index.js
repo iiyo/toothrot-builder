@@ -15,7 +15,13 @@ global.toothrot = toothrot;
 
 function start () {
     
-    win = new BrowserWindow({width: 800, height: 600});
+    win = new BrowserWindow({
+        width: 980,
+        height: 600,
+        frame: true
+    });
+    
+    win.setMenu(null);
     
     win.loadURL(url.format({
         pathname: path.join(__dirname, "index.html"),

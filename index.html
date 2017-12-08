@@ -23,31 +23,43 @@
                     </a>
                     <a class="button dib p-m oval-s iact"
                        data-type="openFolderButton"
-                       data-project="{name}"
+                       data-project-id="{id}"
+                       data-project-name="{name}"
                        data-key="button"
                        title="Open project folder">
                         <span class="fa fa-folder fa-lg"></span>
                     </a>
                     <a class="button dib p-m oval-s iact"
                        data-type="buildDesktopButton"
-                       data-project="{name}"
+                       data-project-id="{id}"
+                       data-project-name="{name}"
                        data-key="button"
                        title="Build for desktop">
                         <span class="fa fa-desktop fa-lg"></span>
                     </a>
                     <a class="button dib p-m oval-s iact"
                        data-type="buildButton"
-                       data-project="{name}"
+                       data-project-id="{id}"
+                       data-project-name="{name}"
                        data-key="button"
                        title="Build for browser">
                         <span class="fa fa-wrench fa-lg"></span>
                     </a>
-                    <a class="button dib p-m green oval-s iact"
+                    <a class="button dib p-m oval-s iact"
                        data-type="runButton"
-                       data-project="{name}"
+                       data-project-id="{id}"
+                       data-project-name="{name}"
                        data-key="button"
                        title="Build &amp; run">
                         <span class="fa fa-play-circle fa-lg"></span>
+                    </a>
+                    <a class="button dib p-m oval-s iact"
+                       data-type="saveButton"
+                       data-project-id="{id}"
+                       data-project-name="{name}"
+                       data-key="button"
+                       title="Save project">
+                        <span class="fa fa-save fa-lg"></span>
                     </a>
                 </div>
                 <h1 class="Title m0 lh0">
@@ -67,13 +79,6 @@
                                 <select data-type="fileSelect">
                                     <optgroup label="Story Files">
                                         <option>story.trot.md</option>
-                                        <option>
-                                            File1.trot.ext.md
-                                        </option>
-                                    </optgroup>
-                                    <optgroup label="Screens">
-                                        <option>main.html</option>
-                                        <option>cartridge.html</option>
                                     </optgroup>
                                 </select>
                             </div>

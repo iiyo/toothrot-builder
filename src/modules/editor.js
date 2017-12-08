@@ -1,27 +1,62 @@
 
-var fs = require("fs");
+var crypto = require("crypto");
 var fade = require("domfx/fade");
 var loader = require("monaco-loader");
 
+var STORY_FILE_TYPE = "story";
+var SCREEN_FILE_TYPE = "screen";
+var TEMPLATE_FILE_TYPE = "template";
+
+var STORY_FILE_LANGUAGE = "markdown";
+var SCREEN_FILE_LANGUAGE = "html";
+var TEMPLATE_FILE_LANGUAGE = "html";
+
+var DEFAULT_EDITOR_LANGUAGE = STORY_FILE_LANGUAGE;
+var DEFAULT_STORY_FILE_NAME = "story.trot.md";
+
+var FILE_LIST_TYPE = "fileSelect";
+var FILE_LIST_ITEM_TYPE = "fileOption";
+
+var FILE_LIST_SELECTOR = "[data-type='" + FILE_LIST_TYPE + "']";
+var EDITOR_FRAME_SELECTOR = ".editor-frame";
+var EDITOR_CONTENT_SELECTOR = ".editor-content";
+
+var FILE_GROUP_ATTRIBUTE = "data-file-type";
+var FILE_LANGUAGE_ATTRIBUTE = "data-file-language";
+
+var KEY_CODE_S = 49;
+
 function create(context) {
     
-    var monaco, editor, element, editorElement, editorFrame, projects;
+    var monaco, editor, element, editorElement, editorFrame, projects, fileList, dialogs, changes;
+    
+    var current = {
+        project: null,
+        fileName: null,
+        fileType: STORY_FILE_TYPE
+    };
     
     function init() {
         
         element = context.getElement();
-        editorFrame = document.querySelector(".editor-frame");
-        editorElement = document.querySelector(".editor-content");
+        fileList = element.querySelector(FILE_LIST_SELECTOR);
+        editorFrame = document.querySelector(EDITOR_FRAME_SELECTOR);
+        editorElement = document.querySelector(EDITOR_CONTENT_SELECTOR);
+        
         projects = context.getService("project");
+        changes = context.getService("changeObserver");
+        dialogs = context.getService("dialog");
         
         fade.out(element, 0);
         fade.out(editorFrame, 0);
         
         loader().then(function (monacoEditor) {
+            
             monaco = monacoEditor;
+            
             editor = monaco.editor.create(editorElement, {
                 value: "",
-                language: "markdown",
+                language: DEFAULT_EDITOR_LANGUAGE,
                 lineNumbers: true,
                 scrollBeyondLastLine: true,
                 readOnly: false,
@@ -36,25 +71,134 @@ function create(context) {
                     enabled: false
                 }
             });
-            console.log("Editor created:", editor);
+            
+            editor.onDidChangeModelContent(onContentChange);
+            editor.onKeyDown(onKeyDown);
         });
     }
     
     function destroy() {
         editorElement = null;
+        editorFrame = null;
+        fileList = null;
         element = null;
+        projects = null;
     }
     
-    function loadJsFile(path) {
-        monaco.editor.create(
-            editorElement,
-            {
-                value: "" + fs.readFileSync(path)
-            }
+    function updateFileList() {
+        
+        clearFileList();
+        
+        addFileGroup(
+            "Story Files",
+            projects.getStoryFileNames(current.project),
+            STORY_FILE_LANGUAGE,
+            STORY_FILE_TYPE
+        );
+        
+        addFileGroup(
+            "Screens",
+            projects.getScreenFileNames(current.project),
+            SCREEN_FILE_LANGUAGE,
+            SCREEN_FILE_TYPE
+        );
+        
+        addFileGroup(
+            "Templates",
+            projects.getTemplateFileNames(current.project),
+            TEMPLATE_FILE_LANGUAGE,
+            TEMPLATE_FILE_TYPE
         );
     }
     
-    function handleRealmChange (realm) {
+    function clearFileList() {
+        fileList.innerHTML = "";
+    }
+    
+    function addFileGroup(label, files, language, fileType) {
+        
+        var group = document.createElement("optgroup");
+        
+        group.setAttribute("label", label);
+        group.setAttribute(FILE_GROUP_ATTRIBUTE, fileType);
+        
+        files.forEach(function (file) {
+            
+            var option = document.createElement("option");
+            
+            option.value = file;
+            option.innerHTML = file;
+            
+            if (current.fileName === file) {
+                option.setAttribute("selected", "selected");
+            }
+            
+            option.setAttribute("data-type", FILE_LIST_ITEM_TYPE);
+            option.setAttribute(FILE_LANGUAGE_ATTRIBUTE, language);
+            
+            group.appendChild(option);
+        });
+        
+        fileList.appendChild(group);
+    }
+    
+    function openFile(fileName, language, fileType) {
+        
+        var value;
+        
+        current.fileName = fileName;
+        current.fileType = fileType;
+        
+        if (fileType === STORY_FILE_TYPE) {
+            value = projects.getStoryFile(current.project, fileName);
+        }
+        else if (fileType === SCREEN_FILE_TYPE) {
+            value = projects.getScreenFile(current.project, fileName);
+        }
+        else if (fileType === TEMPLATE_FILE_TYPE) {
+            value = projects.getTemplateFile(current.project, fileName);
+        }
+        
+        if (value) {
+            
+            context.broadcast("editorFileOpened", {
+                fileName: fileName,
+                hash: createHash(value)
+            });
+            
+            editor.setValue(value);
+            editor.updateOptions({
+                language: language
+            });
+        }
+    }
+    
+    function save() {
+        if (current.fileType === STORY_FILE_TYPE) {
+            projects.saveStoryFile(current.project, current.fileName, editor.getValue());
+            context.broadcast("editorSaved");
+        }
+        else if (current.fileType === SCREEN_FILE_TYPE) {
+            projects.saveScreenFile(current.project, current.fileName, editor.getValue());
+            context.broadcast("editorSaved");
+        }
+        else if (current.fileType === TEMPLATE_FILE_TYPE) {
+            projects.saveTemplateFile(current.project, current.fileName, editor.getValue());
+            context.broadcast("editorSaved");
+        }
+        else {
+            console.error("Saving failed. Unknown file type '" + current.fileType + "'.");
+        }
+    }
+    
+    function onContentChange() {
+        context.broadcast("editorChanged", {
+            fileName: current.fileName,
+            hash: createHash(editor.getValue())
+        });
+    }
+    
+    function handleRealmChange(realm) {
         if (realm === "editor") {
             fade.in(element, 0);
             fade.in(editorFrame, 0);
@@ -65,19 +209,69 @@ function create(context) {
         }
     }
     
-    function handleProjectChange (name) {
-        editor.setValue(projects.getStoryFile(name));
+    function handleProjectChange(data) {
+        
+        current.project = data.id;
+        current.fileName = DEFAULT_STORY_FILE_NAME;
+        
+        updateFileList();
+        
+        editor.setValue(projects.getMainStoryFile(data.id));
         editor.updateOptions({
             language: "markdown"
         });
     }
     
+    function handleChange(event, target, type) {
+        if (type === FILE_LIST_TYPE) {
+            handleOptionClick(target.options[target.selectedIndex]);
+        }
+    }
+    
+    function handleOptionClick(option) {
+        
+        if (changes.hasUnsavedChanges()) {
+            dialogs.confirmDiscardChanges(function (accepted) {
+                if (accepted) {
+                    open();
+                }
+                else {
+                    updateFileList();
+                }
+            });
+        }
+        else {
+            open();
+        }
+        
+        function open() {
+            openFile(
+                option.value,
+                option.getAttribute(FILE_LANGUAGE_ATTRIBUTE),
+                option.parentNode.getAttribute(FILE_GROUP_ATTRIBUTE)
+            );
+        }
+    }
+    
+    function onKeyDown(event) {
+        if (event.ctrlKey && event.keyCode === KEY_CODE_S) {
+            save();
+        }
+    }
+    
+    function createHash(content) {
+        return crypto.createHash("md5").update(content).digest("hex");
+    }
+    
     return {
         init: init,
         destroy: destroy,
+        onchange: handleChange,
+        onkeydown: onKeyDown,
         onmessage: {
             goToRealm: handleRealmChange,
-            changeToProject: handleProjectChange
+            changeToProject: handleProjectChange,
+            saveButtonClick: save
         }
     };
 }

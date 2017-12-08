@@ -71,6 +71,25 @@ function create () {
         }
     }
     
+    function confirmDiscardChanges (then) {
+        
+        confirm({
+            title: "Discard changes?",
+            message: "There are unsaved changes! Do you wish to discard them?",
+            okText: "Yes, discard the changes",
+            onAccept: onAccept,
+            onClose: onClose
+        });
+        
+        function onAccept () {
+            then(true);
+        }
+        
+        function onClose () {
+            then(false);
+        }
+    }
+    
     function confirmDeleteNode (name, then) {
         
         confirm({
@@ -116,6 +135,7 @@ function create () {
         confirmDeleteProject: confirmDeleteProject,
         confirmDeleteNode: confirmDeleteNode,
         confirmRemoveNextForReturn: confirmRemoveNextForReturn,
+        confirmDiscardChanges: confirmDiscardChanges,
         enterNextNode: enterNextNode
     };
 }

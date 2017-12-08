@@ -25,6 +25,7 @@
         console.error(data.data.exception);
     });
     
+    Box.Application.addService("changeObserver", require("./src/services/changeObserver"));
     Box.Application.addService("notification", require("./src/services/notification"));
     Box.Application.addService("dialog", require("./src/services/dialog"));
     Box.Application.addService("project", require("./src/services/project"));

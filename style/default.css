@@ -536,6 +536,11 @@ input[type=text], input[type=password], .sunken {
     text-decoration: none;
 }
 
+.button.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
 .project {
     max-width: 700px;
     padding: 0;

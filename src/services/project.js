@@ -5,13 +5,15 @@ var normalize = require("path").normalize;
 var patchFs = require("electron-patch-fs");
 var toothrot = require("toothrot");
 
+var STORY_FILE_PATTERN = /\.trot\.(md|ext\.md)$/;
+var SCREEN_FILE_PATTERN = /\.html$/;
+var TEMPLATE_FILE_PATTERN = /\.html$/;
+
 function create (app) {
     
-    function createProject (name, then) {
+    function createProject(name, then) {
         
         var folder = getProjectFolder(name);
-        
-        console.log("Creating new project in: ", folder);
         
         toothrot.init(folder, function () {
             
@@ -25,11 +27,11 @@ function create (app) {
         });
     }
     
-    function initProjectName (name) {
+    function initProjectName(name) {
         
         var info = getProjectInfo(name);
-        var storyPath = getStoryFilePath(name);
-        var storyLines = getStoryFile(name).split("\n");
+        var storyPath = getMainStoryFilePath(name);
+        var storyLines = getMainStoryFile(name).split("\n");
         
         info.name = name;
         
@@ -40,51 +42,75 @@ function create (app) {
         saveProjectInfo(name, info);
     }
     
-    function getProjectsFolder () {
+    function getProjectsFolder() {
         return app.getGlobalConfig().paths.projects;
     }
     
-    function getProjectFolder (name) {
+    function getProjectFolder(name) {
         return normalize(getProjectsFolder() + "/" + name + "/");
     }
     
-    function getProjectBuildFolder (name) {
-        return normalize(getProjectFolder(name) + "/build/");
+    function getProjectBuildFolder(projectId) {
+        return normalize(getProjectFolder(projectId) + "/build/");
     }
     
-    function getProjectInfoFilePath (name) {
-        return normalize(getProjectFolder(name) + "/project.json");
+    function getProjectInfoFilePath(projectId) {
+        return normalize(getProjectFolder(projectId) + "/project.json");
     }
     
-    function getStoryFilePath (name) {
-        return normalize(getProjectFolder(name) + "/resources/story.trot.md");
+    function getStoryFileFolder(projectId) {
+        return normalize(getProjectFolder(projectId) + "/resources/");
     }
     
-    function getAstFilePath (name) {
+    function getScreenFolder(projectId) {
+        return normalize(getProjectFolder(projectId) + "/resources/screens/");
+    }
+    
+    function getTemplateFolder(projectId) {
+        return normalize(getProjectFolder(projectId) + "/resources/templates/");
+    }
+    
+    function getMainStoryFilePath(projectId) {
+        return normalize(getStoryFileFolder(projectId) + "/story.trot.md");
+    }
+    
+    function getAstFilePath(name) {
         return normalize(getProjectFolder(name) + "/resources/ast.json");
     }
     
-    function getProjectInfo (name) {
-        return JSON.parse("" + fs.readFileSync(getProjectInfoFilePath(name)));
+    function getProjectInfo(name) {
+        
+        var info = JSON.parse("" + fs.readFileSync(getProjectInfoFilePath(name)));
+        
+        info.__toothrotBuilder = {
+            projectId: name
+        };
+        
+        return info;
     }
     
-    function saveProjectInfo (name, info) {
+    function saveProjectInfo(name, info) {
+        
+        if (info.__toothrotBuilder) {
+            delete info.__toothrotBuilder;
+        }
+        
         fs.writeFileSync(getProjectInfoFilePath(name), JSON.stringify(info));
     }
     
-    function getProjectNames () {
+    function getProjectIds() {
         return fs.readdirSync(getProjectsFolder());
     }
     
-    function getProjectInfos () {
-        return getProjectNames().map(getProjectInfo);
+    function getProjectInfos() {
+        return getProjectIds().map(getProjectInfo);
     }
     
-    function notify (title, message, timeout) {
+    function notify(title, message, timeout) {
         return app.getService("notification").notify(title, message, timeout);
     }
     
-    function buildProjectFor (platform, name, then) {
+    function buildProjectFor(platform, name, then) {
         
         var folder = getProjectFolder(name);
         var outputDir = getProjectBuildFolder(name);
@@ -123,15 +149,15 @@ function create (app) {
         });
     }
     
-    function buildProject (name, then) {
+    function buildProject(name, then) {
         buildProjectFor("browser", name, then);
     }
     
-    function buildProjectForDesktop (name, then) {
+    function buildProjectForDesktop(name, then) {
         buildProjectFor("desktop", name, then);
     }
     
-    function runProject (name) {
+    function runProject(name) {
         
         var folder = getProjectFolder(name);
         
@@ -140,7 +166,7 @@ function create (app) {
         });
     }
     
-    function deleteProject (name) {
+    function deleteProject(name) {
         
         var folder = getProjectFolder(name);
         
@@ -156,15 +182,69 @@ function create (app) {
         );
     }
     
-    function parseStoryFile (name, then) {
-        return toothrot.parse(getStoryFile(name), then);
+    function parseStoryFile(name, then) {
+        return toothrot.parse(getMainStoryFile(name), then);
     }
     
-    function getStoryFile (name) {
-        return "" + fs.readFileSync(getStoryFilePath(name));
+    function getMainStoryFile(name) {
+        return "" + fs.readFileSync(getMainStoryFilePath(name));
     }
     
-    function getAstFile (name, then) {
+    function getStoryFile(projectId, fileName) {
+        return "" + fs.readFileSync(getStoryFilePath(projectId, fileName));
+    }
+    
+    function getScreenFile(projectId, fileName) {
+        return "" + fs.readFileSync(getScreenFilePath(projectId, fileName));
+    }
+    
+    function getTemplateFile(projectId, fileName) {
+        return "" + fs.readFileSync(getTemplateFilePath(projectId, fileName));
+    }
+    
+    function getStoryFilePath(projectId, fileName) {
+        return normalize(getStoryFileFolder(projectId) + "/" + fileName);
+    }
+    
+    function getScreenFilePath(projectId, fileName) {
+        return normalize(getScreenFolder(projectId) + "/" + fileName);
+    }
+    
+    function getTemplateFilePath(projectId, fileName) {
+        return normalize(getTemplateFolder(projectId) + "/" + fileName);
+    }
+    
+    function getStoryFileNames(projectId) {
+        
+        var path = getStoryFileFolder(projectId);
+        var allFiles = fs.readdirSync(path);
+        
+        return allFiles.filter(function (fileName) {
+            return STORY_FILE_PATTERN.test(fileName);
+        });
+    }
+    
+    function getScreenFileNames(projectId) {
+        
+        var path = getScreenFolder(projectId);
+        var allFiles = fs.readdirSync(path);
+        
+        return allFiles.filter(function (fileName) {
+            return SCREEN_FILE_PATTERN.test(fileName);
+        });
+    }
+    
+    function getTemplateFileNames(projectId) {
+        
+        var path = getTemplateFolder(projectId);
+        var allFiles = fs.readdirSync(path);
+        
+        return allFiles.filter(function (fileName) {
+            return TEMPLATE_FILE_PATTERN.test(fileName);
+        });
+    }
+    
+    function getAstFile(name, then) {
         
         var ast;
         var path = getAstFilePath(name);
@@ -182,21 +262,42 @@ function create (app) {
         return ast;
     }
     
+    function saveStoryFile(projectId, fileName, content) {
+        fs.writeFileSync(getStoryFilePath(projectId, fileName), content);
+    }
+    
+    function saveScreenFile(projectId, fileName, content) {
+        fs.writeFileSync(getScreenFilePath(projectId, fileName), content);
+    }
+    
+    function saveTemplateFile(projectId, fileName, content) {
+        fs.writeFileSync(getTemplateFilePath(projectId, fileName), content);
+    }
+    
     return {
         createProject: createProject,
         getProjectInfo: getProjectInfo,
         getProjectInfoFilePath: getProjectInfoFilePath,
         getProjectInfos: getProjectInfos,
-        getProjectNames: getProjectNames,
+        getProjectIds: getProjectIds,
         getProjectFolder: getProjectFolder,
         buildProject: buildProject,
         buildProjectForDesktop: buildProjectForDesktop,
         runProject: runProject,
         deleteProject: deleteProject,
         parseStoryFile: parseStoryFile,
+        getStoryFileNames: getStoryFileNames,
+        getScreenFileNames: getScreenFileNames,
+        getTemplateFileNames: getTemplateFileNames,
         getStoryFile: getStoryFile,
+        getScreenFile: getScreenFile,
+        getTemplateFile: getTemplateFile,
+        getMainStoryFile: getMainStoryFile,
         getAstFilePath: getAstFilePath,
-        getAstFile: getAstFile
+        getAstFile: getAstFile,
+        saveStoryFile: saveStoryFile,
+        saveScreenFile: saveScreenFile,
+        saveTemplateFile: saveTemplateFile
     };
 }
 

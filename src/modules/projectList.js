@@ -1,5 +1,6 @@
 
-var ATTRIBUTE_PROJECT = "data-project";
+var ATTRIBUTE_PROJECT_ID = "data-project-id";
+var ATTRIBUTE_PROJECT_NAME = "data-project-name";
 
 var fs = require("fs");
 var fade = require("domfx/fade");
@@ -10,18 +11,15 @@ var itemTemplate = "" + fs.readFileSync("src/templates/projectListItem.html");
 
 function create (context) {
     
-    var element, content, projects, dialogs;
+    var element, content, projects;
     
     function init () {
         
         element = context.getElement();
         content = element.querySelector(".content");
         projects = context.getService("project");
-        dialogs = context.getService("dialog");
         
         updateProjectList();
-        
-        console.log("Module 'projectList' initialized.");
         
         setTimeout(function () {
             context.broadcast("goToRealm", "projects");
@@ -36,7 +34,8 @@ function create (context) {
         each(function (item) {
             text += format(itemTemplate, {
                 path: projects.getProjectFolder(item.name),
-                name: item.name
+                name: item.name,
+                id: item.__toothrotBuilder ? item.__toothrotBuilder.projectId : item.name
             });
         }, data);
         
@@ -47,12 +46,14 @@ function create (context) {
         element = null;
         content = null;
         projects = null;
-        dialogs = null;
     }
     
     function handleClick (event, element, elementType) {
         if (elementType === "project") {
-            context.broadcast("changeToProject", element.getAttribute(ATTRIBUTE_PROJECT));
+            context.broadcast("changeToProject", {
+                id: element.getAttribute(ATTRIBUTE_PROJECT_ID),
+                name: element.getAttribute(ATTRIBUTE_PROJECT_NAME)
+            });
             context.broadcast("goToRealm", "editor");
         }
     }

@@ -3,15 +3,32 @@ var shell = require("electron").shell;
 
 var ATTRIBUTE_PROJECT_ID = "data-project-id";
 var ATTRIBUTE_PROJECT_NAME = "data-project-name";
+
 var SAVE_BUTTON_TYPE = "saveButton";
+var RUN_BUTTON_TYPE = "runButton";
+var BUILD_BUTTON_TYPE = "buildButton";
+var BUILD_DESKTOP_BUTTON_TYPE = "buildDesktopButton";
+
 var SAVE_BUTTON_SELECTOR = "[data-type='" + SAVE_BUTTON_TYPE + "']";
+var RUN_BUTTON_SELECTOR = "[data-type='" + RUN_BUTTON_TYPE + "']";
+var BUILD_BUTTON_SELECTOR = "[data-type='" + BUILD_BUTTON_TYPE + "']";
+var BUILD_DESKTOP_BUTTON_SELECTOR = "[data-type='" + BUILD_DESKTOP_BUTTON_TYPE + "']";
+
+function disableElement(element) {
+    element.classList.add("disabled");
+}
+
+function enableElement(element) {
+    element.classList.remove("disabled");
+}
 
 function create (context) {
     
-    var projects, dialogs;
+    var projects, dialogs, observer;
     
     function init () {
         
+        observer = context.getService("changeObserver");
         projects = context.getService("project");
         dialogs = context.getService("dialog");
         
@@ -51,10 +68,10 @@ function create (context) {
         else if (elementType === "openFolderButton") {
             shell.openItem(projects.getProjectFolder(projectId));
         }
-        else if (elementType === "buildButton") {
+        else if (elementType === BUILD_BUTTON_TYPE) {
             projects.buildProject(projectId);
         }
-        else if (elementType === "buildDesktopButton") {
+        else if (elementType === BUILD_DESKTOP_BUTTON_TYPE) {
             projects.buildProjectForDesktop(projectId);
         }
         else if (elementType === "deleteButton") {
@@ -69,30 +86,84 @@ function create (context) {
         }
     }
     
-    function getSaveButtons() {
+    function getElements(selector) {
         return Array.prototype.slice.call(
-            context.getElement().querySelectorAll(SAVE_BUTTON_SELECTOR) || []
+            context.getElement().querySelectorAll(selector) || []
         );
     }
     
-    function enableSaveButtons() {
-        getSaveButtons().forEach(function (button) {
-            button.classList.remove("disabled");
-        });
+    function enableElements(selector) {
+        getElements(selector).forEach(enableElement);
+    }
+    
+    function disableElements(selector) {
+        getElements(selector).forEach(disableElement);
     }
     
     function disableSaveButtons() {
-        getSaveButtons().forEach(function (button) {
-            button.classList.add("disabled");
-        });
+        disableElements(SAVE_BUTTON_SELECTOR);
+    }
+    
+    function enableSaveButtons() {
+        enableElements(SAVE_BUTTON_SELECTOR);
+    }
+    
+    function disableRunButtons() {
+        disableElements(RUN_BUTTON_SELECTOR);
+    }
+    
+    function enableRunButtons() {
+        enableElements(RUN_BUTTON_SELECTOR);
+    }
+    
+    function disableBuildButtons() {
+        disableElements(BUILD_BUTTON_SELECTOR);
+    }
+    
+    function enableBuildButtons() {
+        enableElements(BUILD_BUTTON_SELECTOR);
+    }
+    
+    function disableBuildDesktopButtons() {
+        disableElements(BUILD_DESKTOP_BUTTON_SELECTOR);
+    }
+    
+    function enableBuildDesktopButtons() {
+        enableElements(BUILD_DESKTOP_BUTTON_SELECTOR);
+    }
+    
+    function enableAllBuildRelatedButtons() {
+        enableRunButtons();
+        enableBuildButtons();
+        enableBuildDesktopButtons();
+    }
+    
+    function disableAllBuildRelatedButtons() {
+        disableRunButtons();
+        disableBuildButtons();
+        disableBuildDesktopButtons();
     }
     
     function handleProjectFilesChange() {
         enableSaveButtons();
+        disableAllBuildRelatedButtons();
     }
     
     function handleProjectFilesSaved() {
         disableSaveButtons();
+    }
+    
+    function handleValidation(errors) {
+        handleValidationResult(!(errors && errors.length));
+    }
+    
+    function handleValidationResult(valid) {
+        if (valid) {
+            enableAllBuildRelatedButtons();
+        }
+        else {
+            disableAllBuildRelatedButtons();
+        }
     }
     
     return {
@@ -102,6 +173,7 @@ function create (context) {
         onmessage: {
             projectFilesChanged: handleProjectFilesChange,
             projectFilesSaved: handleProjectFilesSaved,
+            storyValidated: handleValidation,
             goToRealm: disableSaveButtons
         }
     };

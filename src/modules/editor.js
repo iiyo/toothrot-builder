@@ -2,6 +2,7 @@
 var crypto = require("crypto");
 var fade = require("domfx/fade");
 var loader = require("monaco-loader");
+var domglue = require("domglue");
 
 var STORY_FILE_TYPE = "story";
 var SCREEN_FILE_TYPE = "screen";
@@ -26,9 +27,13 @@ var FILE_LANGUAGE_ATTRIBUTE = "data-file-language";
 
 var KEY_CODE_S = 49;
 
+var ERROR_DECORATION_CLASS = "line-error";
+
 function create(context) {
     
-    var monaco, editor, element, editorElement, editorFrame, projects, fileList, dialogs, changes;
+    var monaco, editor, element, editorElement, editorFrame, projects, fileList;
+    var view, dialogs, changes;
+    var oldDecorations = [];
     
     var current = {
         project: null,
@@ -39,6 +44,7 @@ function create(context) {
     function init() {
         
         element = context.getElement();
+        view = domglue.live(element);
         fileList = element.querySelector(FILE_LIST_SELECTOR);
         editorFrame = document.querySelector(EDITOR_FRAME_SELECTOR);
         editorElement = document.querySelector(EDITOR_CONTENT_SELECTOR);
@@ -146,6 +152,9 @@ function create(context) {
         
         var value;
         
+        language = language || STORY_FILE_LANGUAGE;
+        fileType = fileType || STORY_FILE_TYPE;
+        
         current.fileName = fileName;
         current.fileType = fileType;
         
@@ -170,6 +179,12 @@ function create(context) {
             editor.updateOptions({
                 language: language
             });
+            
+            if (fileType === STORY_FILE_TYPE) {
+                validate();
+            }
+            
+            updateFileList();
         }
     }
     
@@ -188,6 +203,86 @@ function create(context) {
         }
         else {
             console.error("Saving failed. Unknown file type '" + current.fileType + "'.");
+        }
+    }
+    
+    function validate() {
+        projects.parseStory(current.project, function (errors) {
+            displayErrors(errors);
+            context.broadcast("storyValidated", errors || []);
+        });
+    }
+    
+    function displayErrors(errors) {
+        
+        var newDecorations = [];
+        
+        (errors || []).filter(function (error) {
+            return error.isToothrotError;
+        }).forEach(function (error) {
+            
+            var locationParts = error.message.split("@");
+            var line = parseInt(locationParts.pop(), 10);
+            
+            var file = locationParts.join("@").split(" ").pop().
+                replace("<", "").replace(">", "").replace("(", "").replace(")", "");
+            
+            if (file === current.fileName) {
+                pushLineError(line);
+            }
+            else if (isHierarchyError(error) && current.fileType === STORY_FILE_TYPE) {
+                
+                line = findHierarchy();
+                
+                if (line > 0) {
+                    pushLineError(line);
+                }
+            }
+        });
+        
+        oldDecorations = editor.deltaDecorations(oldDecorations, newDecorations);
+        
+        function pushLineError(line) {
+            newDecorations.push({
+                range: new monaco.Range(line, 1, line, 2),
+                options: {
+                    isWholeLine: true,
+                    linesDecorationsClassName: ERROR_DECORATION_CLASS
+                }
+            });
+        }
+    }
+    
+    function isHierarchyError(error) {
+        return (
+            error.id === "CIRCULAR_HIERARCHY" ||
+            error.id === "HIERARCHY_JSON_ERROR"
+        );
+    }
+    
+    function findHierarchy() {
+        
+        var content = editor.getValue();
+        
+        return content.split("@hierarchy")[0].split("\n").length;
+    }
+    
+    function revealLocation(targetLocation) {
+        
+        if (current.fileName === targetLocation.file) {
+            reveal();
+        }
+        else {
+            ifShouldOpenFile(function () {
+                openFile(targetLocation.file);
+                reveal();
+            });
+        }
+        
+        function reveal() {
+            editor.revealRangeAtTop(
+                new monaco.Range(targetLocation.line, 1, targetLocation.line, 2)
+            );
         }
     }
     
@@ -216,10 +311,16 @@ function create(context) {
         
         updateFileList();
         
+        view.update({
+           projectTitle: current.project 
+        });
+        
         editor.setValue(projects.getMainStoryFile(data.id));
         editor.updateOptions({
             language: "markdown"
         });
+        
+        validate();
     }
     
     function handleChange(event, target, type) {
@@ -228,12 +329,11 @@ function create(context) {
         }
     }
     
-    function handleOptionClick(option) {
-        
+    function ifShouldOpenFile(then) {
         if (changes.hasUnsavedChanges()) {
             dialogs.confirmDiscardChanges(function (accepted) {
                 if (accepted) {
-                    open();
+                    then();
                 }
                 else {
                     updateFileList();
@@ -241,21 +341,24 @@ function create(context) {
             });
         }
         else {
-            open();
+            then();
         }
-        
-        function open() {
+    }
+    
+    function handleOptionClick(option) {
+        ifShouldOpenFile(function () {
             openFile(
                 option.value,
                 option.getAttribute(FILE_LANGUAGE_ATTRIBUTE),
                 option.parentNode.getAttribute(FILE_GROUP_ATTRIBUTE)
             );
-        }
+        });
     }
     
     function onKeyDown(event) {
         if (event.ctrlKey && event.keyCode === KEY_CODE_S) {
             save();
+            validate();
         }
     }
     
@@ -271,6 +374,7 @@ function create(context) {
         onmessage: {
             goToRealm: handleRealmChange,
             changeToProject: handleProjectChange,
+            locationLinkClicked: revealLocation,
             saveButtonClick: save
         }
     };

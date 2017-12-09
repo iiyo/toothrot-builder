@@ -89,6 +89,35 @@
         </div>
         <div class="editor-frame abs l0 r0 b0">
             <div class="editor-content w100 h100"></div>
+            <div class="error-guide" data-module="errorGuide">
+                <div class="error-guide-header">
+                    <div class="error-stats" data-key="stats">
+                        <i class="fa fa-warning"></i> Error:
+                        <span data-key="offset">0</span> /
+                        <span data-key="count">0</span>
+                    </div>
+                    <div class="error-navigation" data-key="navigation">
+                        <div data-type="errorLink"
+                                data-key="previous"
+                                class="button"
+                                data-target-offset="0"
+                                title="Previous error">
+                            <i class="fa fa-chevron-left"></i>
+                        </div>
+                        <div data-type="errorLink"
+                                data-key="next"
+                                class="button"
+                                data-target-offset="0"
+                                title="Next error">
+                            <i class="fa fa-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="error-details" data-key="error">
+                    <div class="error-id">Error ID: <span data-key="id">???</span></div>
+                    <div class="error-message" data-key="message">???</div>
+                </div>
+            </div>
         </div>
         <script src="src/index.js"></script>
     </body>

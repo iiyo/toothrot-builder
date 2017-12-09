@@ -2,12 +2,16 @@
 function create(app) {
     
     var lastHash, lastFileName;
+    
+    var storyErrors = false;
     var unsavedChanges = false;
     
     var listeners = {
         editorChanged: onEditorChanged,
         editorSaved: onEditorSaved,
-        editorFileOpened: onEditorFileOpened
+        editorFileOpened: onEditorFileOpened,
+        changeToProject: onProjectChange,
+        storyValidated: onValidation
     };
     
     app.on("message", function (data) {
@@ -22,6 +26,10 @@ function create(app) {
     
     function hasUnsavedChanges() {
         return unsavedChanges;
+    }
+    
+    function hasStoryErrors() {
+        return storyErrors;
     }
     
     function onEditorChanged(data) {
@@ -58,8 +66,17 @@ function create(app) {
         app.broadcast("projectFilesSaved");
     }
     
+    function onProjectChange() {
+        unsavedChanges = false;
+    }
+    
+    function onValidation(errors) {
+        storyErrors = !!(errors && errors.length);
+    }
+    
     return {
-        hasUnsavedChanges: hasUnsavedChanges
+        hasUnsavedChanges: hasUnsavedChanges,
+        hasStoryErrors: hasStoryErrors
     };
 }
 

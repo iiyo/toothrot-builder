@@ -614,3 +614,81 @@ input[type=text], input[type=password], .sunken {
     height: 30px;
     min-width: 300px;
 }
+
+.line-error:after {
+    content: " ! ";
+    position: absolute;
+    right: 0;
+    min-width: 20px;
+    min-height: 20px;
+    border-radius: 100%;
+    background: rgb(120, 20, 20);
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+.error-guide {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 960px;
+    background: rgba(50, 0, 0, 0.9);
+    color: white;
+    border: 1px solid rgba(255, 0, 0, 0.6);
+    box-shadow: 0 0 20px black;
+    transform: translate(-50%, 120%);
+    transition-duration: 0.2s;
+}
+
+.error-guide.enabled {
+    transform: translate(-50%, 0);
+}
+
+.error-guide-header {
+    position: relative;
+    background: rgb(120, 20, 20);
+    padding: 10px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.error-navigation {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: right;
+}
+
+.error-navigation .button {
+    display: inline-block;
+    min-width: 30px;
+    height: 25px;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.error-navigation *[data-state=disabled] {
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+.error-details {
+    min-height: 100px;
+    padding: 10px;
+}
+
+.error-details .error-id {
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.error-message .location-link {
+    cursor: pointer;
+    text-decoration: underline;
+    color: rgb(50, 150, 255);
+}

@@ -4,6 +4,9 @@ var rimraf = require("rimraf");
 var normalize = require("path").normalize;
 var patchFs = require("electron-patch-fs");
 var toothrot = require("toothrot");
+var readStoryFiles = require("toothrot/src/utils/readStoryFiles");
+
+var parse = toothrot.parse;
 
 var STORY_FILE_PATTERN = /\.trot\.(md|ext\.md)$/;
 var SCREEN_FILE_PATTERN = /\.html$/;
@@ -186,6 +189,10 @@ function create (app) {
         return toothrot.parse(getMainStoryFile(name), then);
     }
     
+    function parseStory(projectId, then) {
+        parse(readStoryFiles(getStoryFileFolder(projectId)), then);
+    }
+    
     function getMainStoryFile(name) {
         return "" + fs.readFileSync(getMainStoryFilePath(name));
     }
@@ -286,6 +293,7 @@ function create (app) {
         runProject: runProject,
         deleteProject: deleteProject,
         parseStoryFile: parseStoryFile,
+        parseStory: parseStory,
         getStoryFileNames: getStoryFileNames,
         getScreenFileNames: getScreenFileNames,
         getTemplateFileNames: getTemplateFileNames,

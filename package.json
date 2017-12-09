@@ -1,7 +1,7 @@
 {
   "name": "toothrot-builder",
-  "version": "2.0.0-beta.1",
-  "description": "A desktop build tool for creating and deploying Toothrot projects.",
+  "version": "2.0.0-beta.2",
+  "description": "A desktop build tool and editor for creating and deploying toothrot projects.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,6 +12,7 @@
     "domfx": "^0.2.0",
     "domglue": "1.0.x",
     "electron-patch-fs": "^1.0.3",
+    "enjoy-core": "^1.2.0",
     "homedir": "^0.6.0",
     "monaco-editor": "^0.10.1",
     "monaco-loader": "^0.8.2",

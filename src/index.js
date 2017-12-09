@@ -35,6 +35,7 @@
     Box.Application.addModule("header", require("./src/modules/header"));
     Box.Application.addModule("projectList", require("./src/modules/projectList"));
     Box.Application.addModule("editor", require("./src/modules/editor"));
+    Box.Application.addModule("errorGuide", require("./src/modules/errorGuide"));
     
     Box.Application.init(config);
     

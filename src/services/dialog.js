@@ -71,12 +71,31 @@ function create () {
         }
     }
     
-    function confirmDiscardChanges (then) {
+    function confirmDiscardChanges(then) {
         
         confirm({
             title: "Discard changes?",
             message: "There are unsaved changes! Do you wish to discard them?",
             okText: "Yes, discard the changes",
+            onAccept: onAccept,
+            onClose: onClose
+        });
+        
+        function onAccept () {
+            then(true);
+        }
+        
+        function onClose () {
+            then(false);
+        }
+    }
+    
+    function confirmDeleteFile(fileName, then) {
+        
+        confirm({
+            title: "Delete file?",
+            message: "Do you really want to delete '" + fileName + "'? This can't be undone!",
+            okText: "Yes, delete the file",
             onAccept: onAccept,
             onClose: onClose
         });
@@ -136,6 +155,7 @@ function create () {
         confirmDeleteNode: confirmDeleteNode,
         confirmRemoveNextForReturn: confirmRemoveNextForReturn,
         confirmDiscardChanges: confirmDiscardChanges,
+        confirmDeleteFile: confirmDeleteFile,
         enterNextNode: enterNextNode
     };
 }

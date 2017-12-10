@@ -1,7 +1,7 @@
 
 var domglue = require("domglue");
-var insertLinks = require("../helpers/locationMarkers").insert;
-var parseLocations = require("../helpers/locationMarkers").parse;
+var insertLinks = require("../utils/locationMarkers").insert;
+var parseLocations = require("../utils/locationMarkers").parse;
 
 var ERROR_LINK_TYPE = "errorLink";
 var LOCATION_LINK_TYPE = "locationLink";

@@ -615,6 +615,19 @@ input[type=text], input[type=password], .sunken {
     min-width: 300px;
 }
 
+.file-buttons {
+    float: right;
+}
+
+.file-buttons .button {
+    font-size: 0.7em;
+}
+
+.file-buttons .button[data-state=disabled] {
+    pointer-events: none;
+    opacity: 0.3;
+}
+
 .line-error:after {
     content: " ! ";
     position: absolute;

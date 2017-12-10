@@ -11,6 +11,7 @@ var parse = toothrot.parse;
 var STORY_FILE_PATTERN = /\.trot\.(md|ext\.md)$/;
 var SCREEN_FILE_PATTERN = /\.html$/;
 var TEMPLATE_FILE_PATTERN = /\.html$/;
+var STYLESHEET_FILE_PATTERN = /\.css$/;
 
 function create (app) {
     
@@ -71,6 +72,10 @@ function create (app) {
     
     function getTemplateFolder(projectId) {
         return normalize(getProjectFolder(projectId) + "/resources/templates/");
+    }
+    
+    function getStylesheetFolder(projectId) {
+        return normalize(getProjectFolder(projectId) + "/files/style/");
     }
     
     function getMainStoryFilePath(projectId) {
@@ -209,6 +214,10 @@ function create (app) {
         return "" + fs.readFileSync(getTemplateFilePath(projectId, fileName));
     }
     
+    function getStylesheet(projectId, fileName) {
+        return "" + fs.readFileSync(getStylesheetPath(projectId, fileName));
+    }
+    
     function getStoryFilePath(projectId, fileName) {
         return normalize(getStoryFileFolder(projectId) + "/" + fileName);
     }
@@ -219,6 +228,10 @@ function create (app) {
     
     function getTemplateFilePath(projectId, fileName) {
         return normalize(getTemplateFolder(projectId) + "/" + fileName);
+    }
+    
+    function getStylesheetPath(projectId, fileName) {
+        return normalize(getStylesheetFolder(projectId) + "/" + fileName);
     }
     
     function getStoryFileNames(projectId) {
@@ -248,6 +261,16 @@ function create (app) {
         
         return allFiles.filter(function (fileName) {
             return TEMPLATE_FILE_PATTERN.test(fileName);
+        });
+    }
+    
+    function getStylesheetFileNames(projectId) {
+        
+        var path = getStylesheetFolder(projectId);
+        var allFiles = fs.readdirSync(path);
+        
+        return allFiles.filter(function (fileName) {
+            return STYLESHEET_FILE_PATTERN.test(fileName);
         });
     }
     
@@ -281,6 +304,26 @@ function create (app) {
         fs.writeFileSync(getTemplateFilePath(projectId, fileName), content);
     }
     
+    function saveStylesheet(projectId, fileName, content) {
+        fs.writeFileSync(getStylesheetPath(projectId, fileName), content);
+    }
+    
+    function deleteStoryFile(projectId, fileName) {
+        fs.unlinkSync(getStoryFilePath(projectId, fileName));
+    }
+    
+    function deleteScreenFile(projectId, fileName) {
+        fs.unlinkSync(getScreenFilePath(projectId, fileName));
+    }
+    
+    function deleteTemplateFile(projectId, fileName) {
+        fs.unlinkSync(getTemplateFilePath(projectId, fileName));
+    }
+    
+    function deleteStylesheet(projectId, fileName) {
+        fs.unlinkSync(getStylesheetPath(projectId, fileName));
+    }
+    
     return {
         createProject: createProject,
         getProjectInfo: getProjectInfo,
@@ -297,15 +340,22 @@ function create (app) {
         getStoryFileNames: getStoryFileNames,
         getScreenFileNames: getScreenFileNames,
         getTemplateFileNames: getTemplateFileNames,
+        getStylesheetFileNames: getStylesheetFileNames,
         getStoryFile: getStoryFile,
         getScreenFile: getScreenFile,
         getTemplateFile: getTemplateFile,
+        getStylesheet: getStylesheet,
         getMainStoryFile: getMainStoryFile,
         getAstFilePath: getAstFilePath,
         getAstFile: getAstFile,
+        deleteStoryFile: deleteStoryFile,
+        deleteScreenFile: deleteScreenFile,
+        deleteTemplateFile: deleteTemplateFile,
+        deleteStylesheet: deleteStylesheet,
         saveStoryFile: saveStoryFile,
         saveScreenFile: saveScreenFile,
-        saveTemplateFile: saveTemplateFile
+        saveTemplateFile: saveTemplateFile,
+        saveStylesheet: saveStylesheet
     };
 }
 

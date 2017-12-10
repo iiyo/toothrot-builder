@@ -2,7 +2,7 @@
 var FADE_DURATION = 200;
 
 var fade = require("domfx/fade");
-var delegate = require("../helpers/delegate");
+var delegate = require("../utils/delegate");
 
 function nothing () {
     // do nothing...

@@ -3,14 +3,19 @@ var crypto = require("crypto");
 var fade = require("domfx/fade");
 var loader = require("monaco-loader");
 var domglue = require("domglue");
+var contains = require("enjoy-core/contains");
+
+var registerLanguage = require("../utils/trotLanguage").register;
 
 var STORY_FILE_TYPE = "story";
 var SCREEN_FILE_TYPE = "screen";
 var TEMPLATE_FILE_TYPE = "template";
+var STYLESHEET_FILE_TYPE = "stylesheet";
 
-var STORY_FILE_LANGUAGE = "markdown";
+var STORY_FILE_LANGUAGE = "toothrot";
 var SCREEN_FILE_LANGUAGE = "html";
 var TEMPLATE_FILE_LANGUAGE = "html";
+var STYLESHEET_FILE_LANGUAGE = "css";
 
 var DEFAULT_EDITOR_LANGUAGE = STORY_FILE_LANGUAGE;
 var DEFAULT_STORY_FILE_NAME = "story.trot.md";
@@ -25,9 +30,13 @@ var EDITOR_CONTENT_SELECTOR = ".editor-content";
 var FILE_GROUP_ATTRIBUTE = "data-file-type";
 var FILE_LANGUAGE_ATTRIBUTE = "data-file-language";
 
+var DELETE_BUTTON_TYPE = "deleteFileButton";
+
 var KEY_CODE_S = 49;
 
 var ERROR_DECORATION_CLASS = "line-error";
+
+var PROTECTED_FILES = ["story.trot.md", "main.html", "pause.html"];
 
 function create(context) {
     
@@ -60,6 +69,8 @@ function create(context) {
             
             monaco = monacoEditor;
             
+            registerLanguage(monaco);
+            
             editor = monaco.editor.create(editorElement, {
                 value: "",
                 language: DEFAULT_EDITOR_LANGUAGE,
@@ -67,7 +78,7 @@ function create(context) {
                 scrollBeyondLastLine: true,
                 readOnly: false,
                 automaticLayout: true,
-                theme: "vs-dark",
+                theme: "toothrot",
                 dragAndDrop: true,
                 folding: true,
                 renderWhitespace: "boundary",
@@ -91,7 +102,7 @@ function create(context) {
         projects = null;
     }
     
-    function updateFileList() {
+    function updateFileControls() {
         
         clearFileList();
         
@@ -115,6 +126,23 @@ function create(context) {
             TEMPLATE_FILE_LANGUAGE,
             TEMPLATE_FILE_TYPE
         );
+        
+        addFileGroup(
+            "Stylesheets",
+            projects.getStylesheetFileNames(current.project),
+            STYLESHEET_FILE_LANGUAGE,
+            STYLESHEET_FILE_TYPE
+        );
+        
+        updateFileButtons();
+    }
+    
+    function updateFileButtons() {
+        view.update({
+            deleteButton: {
+                "@data-state": contains(PROTECTED_FILES, current.fileName) ? "disabled" : "enabled"
+            }
+        });
     }
     
     function clearFileList() {
@@ -167,6 +195,9 @@ function create(context) {
         else if (fileType === TEMPLATE_FILE_TYPE) {
             value = projects.getTemplateFile(current.project, fileName);
         }
+        else if (fileType === STYLESHEET_FILE_TYPE) {
+            value = projects.getStylesheet(current.project, fileName);
+        }
         
         if (value) {
             
@@ -176,15 +207,13 @@ function create(context) {
             });
             
             editor.setValue(value);
-            editor.updateOptions({
-                language: language
-            });
+            monaco.editor.setModelLanguage(editor.getModel(), language);
             
             if (fileType === STORY_FILE_TYPE) {
                 validate();
             }
             
-            updateFileList();
+            updateFileControls();
         }
     }
     
@@ -201,8 +230,34 @@ function create(context) {
             projects.saveTemplateFile(current.project, current.fileName, editor.getValue());
             context.broadcast("editorSaved");
         }
+        else if (current.fileType === STYLESHEET_FILE_TYPE) {
+            projects.saveStylesheet(current.project, current.fileName, editor.getValue());
+            context.broadcast("editorSaved");
+        }
         else {
             console.error("Saving failed. Unknown file type '" + current.fileType + "'.");
+        }
+    }
+    
+    function deleteFile() {
+        if (current.fileType === STORY_FILE_TYPE) {
+            projects.deleteStoryFile(current.project, current.fileName);
+            context.broadcast("fileDeleted");
+        }
+        else if (current.fileType === SCREEN_FILE_TYPE) {
+            projects.deleteScreenFile(current.project, current.fileName);
+            context.broadcast("fileDeleted");
+        }
+        else if (current.fileType === TEMPLATE_FILE_TYPE) {
+            projects.deleteTemplateFile(current.project, current.fileName);
+            context.broadcast("fileDeleted");
+        }
+        else if (current.fileType === STYLESHEET_FILE_TYPE) {
+            projects.deleteStylesheet(current.project, current.fileName);
+            context.broadcast("fileDeleted");
+        }
+        else {
+            console.error("Deleting failed. Unknown file type '" + current.fileType + "'.");
         }
     }
     
@@ -309,16 +364,14 @@ function create(context) {
         current.project = data.id;
         current.fileName = DEFAULT_STORY_FILE_NAME;
         
-        updateFileList();
+        updateFileControls();
         
         view.update({
            projectTitle: current.project 
         });
         
         editor.setValue(projects.getMainStoryFile(data.id));
-        editor.updateOptions({
-            language: "markdown"
-        });
+        monaco.editor.setModelLanguage(editor.getModel(), STORY_FILE_LANGUAGE);
         
         validate();
     }
@@ -336,13 +389,21 @@ function create(context) {
                     then();
                 }
                 else {
-                    updateFileList();
+                    updateFileControls();
                 }
             });
         }
         else {
             then();
         }
+    }
+    
+    function ifShouldDeleteFile(then) {
+        dialogs.confirmDeleteFile(current.fileName, function (accepted) {
+            if (accepted) {
+                then();
+            }
+        });
     }
     
     function handleOptionClick(option) {
@@ -355,10 +416,23 @@ function create(context) {
         });
     }
     
+    function handleDeleteClick() {
+        ifShouldDeleteFile(function () {
+            deleteFile();
+            openFile(DEFAULT_STORY_FILE_NAME);
+        });
+    }
+    
     function onKeyDown(event) {
         if (event.ctrlKey && event.keyCode === KEY_CODE_S) {
             save();
             validate();
+        }
+    }
+    
+    function onClick(event, target, type) {
+        if (type === DELETE_BUTTON_TYPE) {
+            handleDeleteClick();
         }
     }
     
@@ -371,6 +445,7 @@ function create(context) {
         destroy: destroy,
         onchange: handleChange,
         onkeydown: onKeyDown,
+        onclick: onClick,
         onmessage: {
             goToRealm: handleRealmChange,
             changeToProject: handleProjectChange,

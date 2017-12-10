@@ -7,6 +7,10 @@ http://yuilibrary.com/license/
 
 html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal}ol,ul{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:text-top}sub{vertical-align:text-bottom}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit;*font-size:100%}legend{color:#000}#yui3-css-stamp.cssreset{display:none}
 
+* {
+    box-sizing: border-box;
+}
+
 .hidden {
     display: none;
 }
@@ -479,13 +483,58 @@ input[type=text], input[type=password], .sunken {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
 }
 
+.dialog .info {
+    font-size: 10px;
+    visibility: hidden;
+    opacity: 0;
+    transition-duration: 0.2s;
+}
+
+.dialog .info.visible {
+    visibility: visible;
+    opacity: 1;
+}
+
 .dialog .button {
     font-size: 14px;
     background: rgba(0, 0, 0, 0.4);
+    margin-left: 5px;
+}
+
+.dialog .buttons .button {
+    padding: 10px;
 }
 
 .dialog .button:hover {
     background: rgba(0, 0, 0, 0.2);
+}
+
+.new-file-dialog .row {
+    position: relative;
+    height: 40px;
+}
+
+.new-file-dialog .content {
+    font-size: 0;
+}
+
+.new-file-dialog .select-box {
+    width: 40%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 4px;
+}
+
+.new-file-dialog .input {
+    width: 60%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    padding-right: 5px;
+    font-size: 16px;
 }
 
 #header {
@@ -651,6 +700,8 @@ input[type=text], input[type=password], .sunken {
 }
 
 .select-box select {
+    width: 100%;
+    height: 100%;
     cursor: pointer;
     background: transparent;
     background-image: none;
@@ -662,11 +713,11 @@ input[type=text], input[type=password], .sunken {
     padding: 5px 8px;
 }
 
-.select-box select:focus {
-    outline: none;
+.select-box select:focus, input[type=text]:focus {
+    outline: 1px solid rgba(255, 255, 255, 0.6);
 }
 
-.select-box optgroup {
+.select-box optgroup, .select-box option {
     background: rgb(20, 20, 20);
 }
 

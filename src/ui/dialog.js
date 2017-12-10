@@ -70,9 +70,18 @@ function dialog (content, options) {
         var elements = container.querySelectorAll("[name]");
         
         Array.prototype.forEach.call(elements, function (element) {
+            
             if (element.name) {
+                
                 count += 1;
-                values[element.name] = element.value;
+                
+                if (element.nodeName.toLowerCase() === "select") {
+                    values[element.name] = element.options[element.selectedIndex].value;
+                }
+                else {
+                    values[element.name] = element.value;
+                }
+                
             }
         });
         

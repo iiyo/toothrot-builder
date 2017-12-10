@@ -1,6 +1,7 @@
 
 var prompt = require("../ui/prompt");
 var confirm = require("../ui/confirm");
+var newFileDialog = require("../ui/newFileDialog");
 
 function create () {
     
@@ -49,6 +50,31 @@ function create () {
         
         function onClose () {
             onAccept();
+        }
+    }
+    
+    //
+    // isAllowedFileName(fileName, fileType)
+    // then(error, values)
+    //
+    function showNewFileDialog(isAllowedFileName, fileTypes, then) {
+        
+        newFileDialog({
+            onAccept: onAccept,
+            onClose: onClose,
+            isAllowedFileName: isAllowedFileName,
+            fileTypes: fileTypes
+        });
+        
+        function onAccept(values) {
+            then(null, {
+                fileType: values.fileType,
+                fileName: values.fileName
+            });
+        }
+        
+        function onClose() {
+            then(new Error("Dialog canceled."));
         }
     }
     
@@ -156,6 +182,7 @@ function create () {
         confirmRemoveNextForReturn: confirmRemoveNextForReturn,
         confirmDiscardChanges: confirmDiscardChanges,
         confirmDeleteFile: confirmDeleteFile,
+        showNewFileDialog: showNewFileDialog,
         enterNextNode: enterNextNode
     };
 }

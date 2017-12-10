@@ -4,20 +4,13 @@ var fade = require("domfx/fade");
 var loader = require("monaco-loader");
 var domglue = require("domglue");
 var contains = require("enjoy-core/contains");
+var privatize = require("enjoy-core/privatize");
 
 var registerLanguage = require("../utils/trotLanguage").register;
 
-var STORY_FILE_TYPE = "story";
-var SCREEN_FILE_TYPE = "screen";
-var TEMPLATE_FILE_TYPE = "template";
-var STYLESHEET_FILE_TYPE = "stylesheet";
+var FILE_TYPES = require("../projectFileTypes");
 
-var STORY_FILE_LANGUAGE = "toothrot";
-var SCREEN_FILE_LANGUAGE = "html";
-var TEMPLATE_FILE_LANGUAGE = "html";
-var STYLESHEET_FILE_LANGUAGE = "css";
-
-var DEFAULT_EDITOR_LANGUAGE = STORY_FILE_LANGUAGE;
+var DEFAULT_EDITOR_LANGUAGE = FILE_TYPES.STORY.LANGUAGE;
 var DEFAULT_STORY_FILE_NAME = "story.trot.md";
 
 var FILE_LIST_TYPE = "fileSelect";
@@ -32,11 +25,16 @@ var FILE_LANGUAGE_ATTRIBUTE = "data-file-language";
 
 var DELETE_BUTTON_TYPE = "deleteFileButton";
 
-var KEY_CODE_S = 49;
+var KEY_CODES = {
+    KEY_N: 78,
+    KEY_S: 83
+};
 
 var ERROR_DECORATION_CLASS = "line-error";
 
 var PROTECTED_FILES = ["story.trot.md", "main.html", "pause.html"];
+
+var CREATE_FILE_TYPE = "createFileButton";
 
 function create(context) {
     
@@ -47,7 +45,7 @@ function create(context) {
     var current = {
         project: null,
         fileName: null,
-        fileType: STORY_FILE_TYPE
+        fileType: FILE_TYPES.STORY.ID
     };
     
     function init() {
@@ -106,33 +104,17 @@ function create(context) {
         
         clearFileList();
         
-        addFileGroup(
-            "Story Files",
-            projects.getStoryFileNames(current.project),
-            STORY_FILE_LANGUAGE,
-            STORY_FILE_TYPE
-        );
-        
-        addFileGroup(
-            "Screens",
-            projects.getScreenFileNames(current.project),
-            SCREEN_FILE_LANGUAGE,
-            SCREEN_FILE_TYPE
-        );
-        
-        addFileGroup(
-            "Templates",
-            projects.getTemplateFileNames(current.project),
-            TEMPLATE_FILE_LANGUAGE,
-            TEMPLATE_FILE_TYPE
-        );
-        
-        addFileGroup(
-            "Stylesheets",
-            projects.getStylesheetFileNames(current.project),
-            STYLESHEET_FILE_LANGUAGE,
-            STYLESHEET_FILE_TYPE
-        );
+        Object.keys(FILE_TYPES).forEach(function (id) {
+            
+            var type = FILE_TYPES[id];
+            
+            addFileGroup(
+                type.LABEL,
+                projects.getFileNamesForType(current.project, type.ID),
+                type.LANGUAGE,
+                type.ID
+            );
+        });
         
         updateFileButtons();
     }
@@ -176,30 +158,20 @@ function create(context) {
         fileList.appendChild(group);
     }
     
-    function openFile(fileName, language, fileType) {
+    function openFile(fileName, fileType) {
         
         var value;
         
-        language = language || STORY_FILE_LANGUAGE;
-        fileType = fileType || STORY_FILE_TYPE;
+        fileType = fileType || FILE_TYPES.STORY.ID;
         
         current.fileName = fileName;
         current.fileType = fileType;
         
-        if (fileType === STORY_FILE_TYPE) {
-            value = projects.getStoryFile(current.project, fileName);
-        }
-        else if (fileType === SCREEN_FILE_TYPE) {
-            value = projects.getScreenFile(current.project, fileName);
-        }
-        else if (fileType === TEMPLATE_FILE_TYPE) {
-            value = projects.getTemplateFile(current.project, fileName);
-        }
-        else if (fileType === STYLESHEET_FILE_TYPE) {
-            value = projects.getStylesheet(current.project, fileName);
+        if (fileType in FILE_TYPES) {
+            value = projects.getFile(current.project, fileType, fileName);
         }
         
-        if (value) {
+        if (typeof value === "string") {
             
             context.broadcast("editorFileOpened", {
                 fileName: fileName,
@@ -207,9 +179,9 @@ function create(context) {
             });
             
             editor.setValue(value);
-            monaco.editor.setModelLanguage(editor.getModel(), language);
+            monaco.editor.setModelLanguage(editor.getModel(), FILE_TYPES[fileType].LANGUAGE);
             
-            if (fileType === STORY_FILE_TYPE) {
+            if (fileType === FILE_TYPES.STORY.ID) {
                 validate();
             }
             
@@ -218,20 +190,16 @@ function create(context) {
     }
     
     function save() {
-        if (current.fileType === STORY_FILE_TYPE) {
-            projects.saveStoryFile(current.project, current.fileName, editor.getValue());
-            context.broadcast("editorSaved");
-        }
-        else if (current.fileType === SCREEN_FILE_TYPE) {
-            projects.saveScreenFile(current.project, current.fileName, editor.getValue());
-            context.broadcast("editorSaved");
-        }
-        else if (current.fileType === TEMPLATE_FILE_TYPE) {
-            projects.saveTemplateFile(current.project, current.fileName, editor.getValue());
-            context.broadcast("editorSaved");
-        }
-        else if (current.fileType === STYLESHEET_FILE_TYPE) {
-            projects.saveStylesheet(current.project, current.fileName, editor.getValue());
+        
+        if (current.fileType in FILE_TYPES) {
+            
+            projects.saveFile(
+                current.project,
+                current.fileType,
+                current.fileName,
+                editor.getValue()
+            );
+            
             context.broadcast("editorSaved");
         }
         else {
@@ -240,20 +208,8 @@ function create(context) {
     }
     
     function deleteFile() {
-        if (current.fileType === STORY_FILE_TYPE) {
-            projects.deleteStoryFile(current.project, current.fileName);
-            context.broadcast("fileDeleted");
-        }
-        else if (current.fileType === SCREEN_FILE_TYPE) {
-            projects.deleteScreenFile(current.project, current.fileName);
-            context.broadcast("fileDeleted");
-        }
-        else if (current.fileType === TEMPLATE_FILE_TYPE) {
-            projects.deleteTemplateFile(current.project, current.fileName);
-            context.broadcast("fileDeleted");
-        }
-        else if (current.fileType === STYLESHEET_FILE_TYPE) {
-            projects.deleteStylesheet(current.project, current.fileName);
+        if (current.fileType in FILE_TYPES) {
+            projects.deleteFile(current.project, current.fileType, current.fileName);
             context.broadcast("fileDeleted");
         }
         else {
@@ -285,7 +241,7 @@ function create(context) {
             if (file === current.fileName) {
                 pushLineError(line);
             }
-            else if (isHierarchyError(error) && current.fileType === STORY_FILE_TYPE) {
+            else if (isHierarchyError(error) && current.fileType === FILE_TYPES.STORY.ID) {
                 
                 line = findHierarchy();
                 
@@ -341,6 +297,41 @@ function create(context) {
         }
     }
     
+    function isAllowedFileName(fileName, fileType) {
+        return (
+            fileName &&
+            fileType in FILE_TYPES &&
+            typeof fileName === "string" &&
+            !projects.fileExists(
+                current.project,
+                fileType,
+                fileName + FILE_TYPES[fileType].EXTENSION
+            )
+        );
+    }
+    
+    function showNewFileDialog() {
+        dialogs.showNewFileDialog(
+            isAllowedFileName,
+            privatize(FILE_TYPES, "__key"),
+            function (error, values) {
+                
+                var fileName;
+                
+                if (error) {
+                    return;
+                }
+                
+                fileName = values.fileName + FILE_TYPES[values.fileType].EXTENSION;
+                
+                console.log("fileName:", fileName, FILE_TYPES);
+                
+                projects.saveFile(current.project, values.fileType, fileName, "");
+                openFile(fileName, values.fileType);
+            }
+        );
+    }
+    
     function onContentChange() {
         context.broadcast("editorChanged", {
             fileName: current.fileName,
@@ -371,7 +362,7 @@ function create(context) {
         });
         
         editor.setValue(projects.getMainStoryFile(data.id));
-        monaco.editor.setModelLanguage(editor.getModel(), STORY_FILE_LANGUAGE);
+        monaco.editor.setModelLanguage(editor.getModel(), FILE_TYPES.STORY.LANGUAGE);
         
         validate();
     }
@@ -410,7 +401,6 @@ function create(context) {
         ifShouldOpenFile(function () {
             openFile(
                 option.value,
-                option.getAttribute(FILE_LANGUAGE_ATTRIBUTE),
                 option.parentNode.getAttribute(FILE_GROUP_ATTRIBUTE)
             );
         });
@@ -423,16 +413,26 @@ function create(context) {
         });
     }
     
+    function isKeyCodeFor(value, key) {
+        return (value === KEY_CODES[key] || value === monaco.KeyCode[key]);
+    }
+    
     function onKeyDown(event) {
-        if (event.ctrlKey && event.keyCode === KEY_CODE_S) {
+        if (event.ctrlKey && isKeyCodeFor(event.keyCode, "KEY_S")) {
             save();
             validate();
+        }
+        else if (event.ctrlKey && isKeyCodeFor(event.keyCode, "KEY_N")) {
+            showNewFileDialog();
         }
     }
     
     function onClick(event, target, type) {
         if (type === DELETE_BUTTON_TYPE) {
             handleDeleteClick();
+        }
+        else if (type === CREATE_FILE_TYPE) {
+            showNewFileDialog();
         }
     }
     

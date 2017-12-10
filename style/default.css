@@ -479,6 +479,15 @@ input[type=text], input[type=password], .sunken {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
 }
 
+.dialog .button {
+    font-size: 14px;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.dialog .button:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
 #header {
     padding: 3px;
     background: rgb(0, 0, 0);

@@ -628,6 +628,39 @@ input[type=text], input[type=password], .sunken {
     opacity: 0.3;
 }
 
+.select-box {
+    display: inline-block;
+    position: relative;
+}
+
+.select-box-icon {
+    pointer-events: none;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.select-box select {
+    cursor: pointer;
+    background: transparent;
+    background-image: none;
+    border: 0;
+    color: white;
+    font-size: 0.8em;
+    box-shadow: none;
+    -webkit-appearance: none;
+    padding: 5px 8px;
+}
+
+.select-box select:focus {
+    outline: none;
+}
+
+.select-box optgroup {
+    background: rgb(20, 20, 20);
+}
+
 .line-error:after {
     content: " ! ";
     position: absolute;

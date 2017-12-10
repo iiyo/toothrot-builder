@@ -139,7 +139,7 @@ function create (app) {
                     info.name + " cannot be built!",
                     error !== null && typeof error === "object" && error.message ?
                         error.message :
-                        error
+                        ((error || [])[0] || {}).message || "Unknown error"
                 );
                 
                 then(error);
@@ -169,7 +169,12 @@ function create (app) {
         
         var folder = getProjectFolder(name);
         
-        buildProject(name, function () {
+        buildProject(name, function (error) {
+            
+            if (error) {
+                return;
+            }
+            
             window.open(normalize("file://" + folder + "/build/browser/index.html"));
         });
     }

@@ -1,11 +1,13 @@
+/* global __dirname */
 
 var ENTER_KEY = 13;
 var ESC_KEY = 27;
 
 var fs = require("fs");
+var path = require("path");
 var dialog = require("./dialog");
 var format = require("vrep").format;
-var template = "" + fs.readFileSync("src/templates/newFileDialog.html");
+var template = "" + fs.readFileSync(path.join(__dirname, "../templates/newFileDialog.html"));
 
 var OPTION_TEMPLATE = '<option value="{ID}">{LABEL} ({EXTENSION})</option>';
 

@@ -1,11 +1,14 @@
+/* global __dirname */
 
 var ENTER_KEY = 13;
 var ESC_KEY = 27;
 
 var fs = require("fs");
 var format = require("vrep").format;
+var path = require("path");
 var dialog = require("./dialog");
-var template = "" + fs.readFileSync("src/templates/prompt.html");
+var template = "" + fs.readFileSync(path.join(__dirname, "/../templates/prompt.html"));
+
 
 function prompt (options) {
     

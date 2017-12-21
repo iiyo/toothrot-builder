@@ -1,13 +1,15 @@
+/* global __dirname */
 
 var ATTRIBUTE_PROJECT_ID = "data-project-id";
 var ATTRIBUTE_PROJECT_NAME = "data-project-name";
 
 var fs = require("fs");
+var path = require("path");
 var fade = require("domfx/fade");
 var each = require("enjoy-core/each");
 var format = require("vrep").format;
 
-var itemTemplate = "" + fs.readFileSync("src/templates/projectListItem.html");
+var itemTemplate = "" + fs.readFileSync(path.join(__dirname, "../templates/projectListItem.html"));
 
 function create (context) {
     

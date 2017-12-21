@@ -1,8 +1,10 @@
+/* global __dirname */
 
 var fs = require("fs");
 var format = require("vrep").format;
+var path = require("path");
 var dialog = require("./dialog");
-var template = "" + fs.readFileSync("src/templates/confirm.html");
+var template = "" + fs.readFileSync(path.join(__dirname, "../templates/confirm.html"));
 
 function confirm (options) {
     

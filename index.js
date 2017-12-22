@@ -18,7 +18,8 @@ function start () {
     win = new BrowserWindow({
         width: 980,
         height: 600,
-        frame: true
+        frame: true,
+        icon: path.join(__dirname, "style/icons/icon64.png")
     });
     
     win.setMenu(null);

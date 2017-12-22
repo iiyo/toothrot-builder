@@ -1,7 +1,8 @@
 
 var fs = require("original-fs");
 var rimraf = require("rimraf");
-var normalize = require("path").normalize;
+var path = require("path");
+var normalize = path.normalize;
 var patchFs = require("electron-patch-fs");
 var toothrot = require("toothrot");
 var readStoryFiles = require("toothrot/src/utils/readStoryFiles");
@@ -92,7 +93,12 @@ function create (app) {
     }
     
     function getProjectIds() {
-        return fs.readdirSync(getProjectsFolder());
+        
+        var folder = getProjectsFolder();
+        
+        return fs.readdirSync(folder).filter(function (name) {
+            return fs.lstatSync(path.join(folder, name)).isDirectory();
+        });
     }
     
     function getProjectInfos() {
